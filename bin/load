@@ -1,0 +1,38 @@
+#!/usr/bin/perl -CS
+
+use strict;
+use warnings;
+
+use Text::ParseWords;
+use Mercurial::Schema;
+use Data::Printer;
+
+my $sch = Mercurial::Schema->get_schema;
+
+my $yr_rs = $sch->resultset('Year');
+my $ar_rs = $sch->resultset('Artist');
+my $al_rs = $sch->resultset('Album');
+
+my @headers;
+
+while (<>) {
+  chomp;
+  if ($. == 1) {
+    @headers = split /,/;
+    next;
+  }
+
+  my %data;
+  @data{@headers} = parse_line(',', 0, $_);
+
+p %data;
+
+  my $year = $yr_rs->find_or_create({ year => $data{year} });
+  my $artist = $ar_rs->find_or_create({ name => $data{artist} });
+  my $album = $al_rs->find_or_create({
+    title     => $data{album},
+    artist_id => $artist->id,
+    year_id   => $year->id,
+    is_winner => $data{is_winner},
+  });
+}

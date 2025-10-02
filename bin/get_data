@@ -1,0 +1,61 @@
+#!/usr/bin/perl -CS
+
+use strict;
+use warnings;
+
+use feature 'say';
+
+use Web::Query;
+use Data::Printer;
+
+my $url = 'https://en.wikipedia.org/wiki/Mercury_Prize';
+
+my @years;
+
+say 'year,artist,album,is_winner';
+
+wq($url)
+  ->find('table.wikitable.sortable tr')
+  ->each(\&process_year);
+
+for my $y (@years) {
+  for my $a (@{$y->{albums}}) {
+    say join ',', $y->{year}, qq["$a->{artist}"], qq["$a->{album}"], $a->{is_winner};
+  }
+}
+
+sub process_year {
+  my $data;
+
+  my $year = $_->find('td')->first;
+
+  return unless $year->text;
+
+  ($data->{year}) = $year->text =~ /(\d{4})/;
+
+  my $winner = $year->next;
+
+  push @{$data->{albums}}, get_album_data($winner->text, 1);
+
+  my @shortlist;
+
+  $winner->next->find('li')->each(sub { push @shortlist, $_->text });
+
+  push @{$data->{albums}}, get_album_data($_, 0) for @shortlist;
+
+  push @years, $data;
+}
+
+sub get_album_data {
+  my ($text, $is_winner) = @_;
+
+  return unless $text;
+
+  my ($artist, $album) = split /\s+[-\x{2013}]\s+/, $text;
+
+  return {
+    artist    => $artist,
+    album     => $album,
+    is_winner => $is_winner,
+  };
+}
