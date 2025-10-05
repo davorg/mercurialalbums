@@ -93,7 +93,7 @@ for my $ar (@artists) {
 }
 
 # Albums
-my @albums = $schema->resultset('Album')->sorted_albums;
+my @albums = $schema->resultset('Album')->by_title;
 write_page(
   template => 'albums_index.tt',
   vars     => { albums => \@albums },
