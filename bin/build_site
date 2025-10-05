@@ -87,7 +87,7 @@ write_page(
 for my $yr (@years) {
   my @albums = $schema->resultset('Album')->search(
     { 'me.year_id' => $yr->id },
-    { prefetch => ['artist','year'], order_by => [ { -desc => 'me.is_winner' }, 'artist.name', 'me.title' ] }
+    { prefetch => ['artist','year'], order_by => [ { -desc => 'me.is_winner' }, 'me.title' ] }
   )->all;
   my @alist = map {
     +{
