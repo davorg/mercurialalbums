@@ -17,3 +17,47 @@ a:hover{ text-decoration:underline }
 .list li{ padding:.5rem 0; border-bottom:1px solid #1e263b }
 .badge{ display:inline-block; font-size:.75rem; padding:.1rem .4rem; background:var(--accent); color:#000; border-radius:.4rem; margin-right:.5rem }
 .content h1{ margin-top:0 }
+
+/* Header layout: image left, title+nav stacked to the right */
+.header-bar{
+  display:flex;
+  align-items:stretch;       /* make children share the same row height */
+  gap:12px;
+}
+
+/* The stacked block keeps your original layout */
+.brand-stack{
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+}
+
+/* Title (unchanged look) */
+.brand{
+  display:inline-block;
+  text-decoration:none;
+  color:inherit;
+  margin:0;                  /* ensure tight top spacing above the nav */
+}
+
+/* Nav (unchanged look; keep your existing styles) */
+.nav a{ margin-right:.75rem; }
+.nav a:last-child{ margin-right:0; }
+
+/* Image matches the full height of the title+nav stack */
+.brand-art{
+  display:block;
+  height:100%;               /* this is the key: stretch to the stack's height */
+  width:auto;                /* preserve aspect ratio */
+  object-fit:contain;
+  /* Optional safety caps; tweak to taste */
+  max-height:96px;           /* prevents it getting too tall on very large fonts */
+  border-radius:6px;         /* if you like the rounded look */
+}
+
+/* Small screens: keep the same structure; allow wrapping if needed */
+@media (max-width: 520px){
+  .header-bar{ flex-wrap:wrap; }
+  .brand-art{ max-height:72px; }
+}
+

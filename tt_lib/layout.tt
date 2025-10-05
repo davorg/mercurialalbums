@@ -11,13 +11,24 @@
 </head>
 <body>
   <header class="site-header">
-    <div class="wrap">
-      <a class="brand" href="/">Mercurial Albums</a>
-      <nav class="nav">
-        [% FOREACH n IN nav %]
-          <a href="[% n.href %]">[% n.label %]</a>
-        [% END %]
-      </nav>
+    <div class="wrap header-bar">
+      <img class="brand-mark"
+           src="/assets/mercury.png"
+           alt=""
+           width="80"
+           height="80"
+           loading="eager"
+           decoding="async">
+      <div class="brand-stack">
+        <a class="brand" href="/">
+            <span class="brand-text">Mercurial Albums</span>
+        </a>
+        <nav class="nav" aria-label="Primary">
+          [% FOREACH n IN nav %]
+            <a href="[% n.href %]">[% n.label %]</a>
+          [% END %]
+        </nav>
+      </div>
     </div>
   </header>
   <main class="wrap content">
