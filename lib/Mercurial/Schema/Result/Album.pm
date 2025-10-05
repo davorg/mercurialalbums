@@ -100,6 +100,21 @@ __PACKAGE__->add_unique_constraint("title_artist_id_unique", ["title", "artist_i
 
 =head1 RELATIONS
 
+=head2 album_retail_links
+
+Type: has_many
+
+Related object: L<Mercurial::Schema::Result::AlbumRetailLink>
+
+=cut
+
+__PACKAGE__->has_many(
+  "album_retail_links",
+  "Mercurial::Schema::Result::AlbumRetailLink",
+  { "foreign.album_id" => "self.id" },
+  { cascade_copy => 0, cascade_delete => 0 },
+);
+
 =head2 artist
 
 Type: belongs_to
@@ -131,13 +146,26 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-02 12:28:33
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ZB0Ar6NPyWIdpDNNOPolNw
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-05 15:06:47
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Z9LQ1RUjCBYyB/Nga9dCAw
 
 with 'Mercurial::Role::Defaults';
 
 sub slug_type      { 'album' }
 sub slug_attribute { 'title' }
+
+sub amazon_asin {
+  my $self = shift;
+
+  my $asin = $self->album_retail_links->search({
+    retailer => 'amazon',
+    country  => 'GB',
+  })->first;
+
+  return unless $asin;
+
+  return $asin->asin;
+}
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 __PACKAGE__->meta->make_immutable;

@@ -1,11 +1,17 @@
 [% page_title = artist.name %]
 <h1>[% artist.name %]</h1>
-<ul class="list">
-[% FOREACH a IN albums %]
-  <li>
-    [% IF a.is_winner %]<span class="badge">Winner</span>[% END %]
-    <a href="[% a.url_path %]/">[% a.title %]</a> — <a href="[% a.year.url_path %]/">[% a.year.year %]</a>
+<ul class="album-list">
+[% FOREACH a IN artist.albums_rs.by_year -%]
+  <li class="album">
+    <div class="meta">
+      [% IF a.is_winner %]<span class="badge">Winner</span>[% END %]
+      <a href="[% a.url_path %]/">[% a.title %]</a>
+      — <a href="[% a.year.url_path %]/">[% a.year.year %]</a>
+    </div>
+
+    <p class="buy">[% amazon_button(a) %]</p>
   </li>
 [% END %]
 </ul>
+
 <p><a href="/artist/">← All artists</a></p>

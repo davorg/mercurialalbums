@@ -7,6 +7,15 @@
   <title>Mercurial Albums — Paul Weller</title>
   <meta name="description" content="Mercurial Albums — Mercury Prize shortlists and winners">
   <link rel="stylesheet" href="/assets/site.css">
+
+  <script src="https://cdn.davecross.co.uk/js/amazon-store/v1/amazon-store.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Default affiliate tag (env-var or hardcode)
+      AmazonStore.enhanceAll({ tag: 'davblog-21' });
+      // AmazonStore.renderStoreGridAll({ tag: 'davblog-21' });
+    });
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -39,19 +48,34 @@
   <main class="wrap content">
     
 <h1>Paul Weller</h1>
-<ul class="list">
+<ul class="album-list">
+  <li class="album">
+    <div class="meta">
+      
+      <a href="/album/wild-wood/">Wild Wood</a>
+      — <a href="/year/1994/">1994</a>
+    </div>
 
-  <li>
-    
-    <a href="/album/wild-wood/">Wild Wood</a> — <a href="/year/1994/">1994</a>
+    <p class="buy">    <a class="btn-amazon"
+       data-amazon-asin="B000001FI1"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a></p>
   </li>
+  <li class="album">
+    <div class="meta">
+      
+      <a href="/album/wake-up-the-nation/">Wake Up the Nation</a>
+      — <a href="/year/2010/">2010</a>
+    </div>
 
-  <li>
-    
-    <a href="/album/wake-up-the-nation/">Wake Up the Nation</a> — <a href="/year/2010/">2010</a>
+    <p class="buy">    <a class="btn-amazon"
+       data-amazon-asin="B00385Y9M4"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a></p>
   </li>
 
 </ul>
+
 <p><a href="/artist/">← All artists</a></p>
 
   </main>

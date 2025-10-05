@@ -7,6 +7,15 @@
   <title>Mercurial Albums — Michael Kiwanuka</title>
   <meta name="description" content="Mercurial Albums — Mercury Prize shortlists and winners">
   <link rel="stylesheet" href="/assets/site.css">
+
+  <script src="https://cdn.davecross.co.uk/js/amazon-store/v1/amazon-store.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Default affiliate tag (env-var or hardcode)
+      AmazonStore.enhanceAll({ tag: 'davblog-21' });
+      // AmazonStore.renderStoreGridAll({ tag: 'davblog-21' });
+    });
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -39,24 +48,46 @@
   <main class="wrap content">
     
 <h1>Michael Kiwanuka</h1>
-<ul class="list">
+<ul class="album-list">
+  <li class="album">
+    <div class="meta">
+      
+      <a href="/album/home-again/">Home Again</a>
+      — <a href="/year/2012/">2012</a>
+    </div>
 
-  <li>
-    
-    <a href="/album/home-again/">Home Again</a> — <a href="/year/2012/">2012</a>
+    <p class="buy">    <a class="btn-amazon"
+       data-amazon-asin="B005MYWZIO"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a></p>
   </li>
+  <li class="album">
+    <div class="meta">
+      
+      <a href="/album/love-hate/">Love & Hate</a>
+      — <a href="/year/2016/">2016</a>
+    </div>
 
-  <li>
-    
-    <a href="/album/love-hate/">Love & Hate</a> — <a href="/year/2016/">2016</a>
+    <p class="buy">    <a class="btn-amazon"
+       data-amazon-asin="B00OSW5LOG"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a></p>
   </li>
+  <li class="album">
+    <div class="meta">
+      <span class="badge">Winner</span>
+      <a href="/album/kiwanuka/">Kiwanuka</a>
+      — <a href="/year/2020/">2020</a>
+    </div>
 
-  <li>
-    <span class="badge">Winner</span>
-    <a href="/album/kiwanuka/">Kiwanuka</a> — <a href="/year/2020/">2020</a>
+    <p class="buy">    <a class="btn-amazon"
+       data-amazon-asin="B07W5RV8HN"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a></p>
   </li>
 
 </ul>
+
 <p><a href="/artist/">← All artists</a></p>
 
   </main>

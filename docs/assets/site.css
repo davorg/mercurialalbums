@@ -61,3 +61,84 @@ a:hover{ text-decoration:underline }
   .brand-art{ max-height:72px; }
 }
 
+/* Home hero layout */
+.hero-grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.hero-art img{
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;              /* optional polish */
+  box-shadow: 0 6px 24px rgba(0,0,0,.25); /* optional */
+}
+
+.hero-copy h1{ margin-top: 0; }
+.hero-copy p{ margin: .5rem 0 0 0; }
+.hero-copy .fine-print{ color: var(--muted); font-size: .95rem; }
+
+/* Side-by-side on wider screens */
+@media (min-width: 900px){
+  .hero-grid{
+    grid-template-columns: 1.15fr 1fr; /* image : copy */
+    gap: 1.5rem;
+  }
+  .hero-art{ order: 1; }
+  .hero-copy{ order: 2; }
+}
+
+.btn-amazon{
+  display:inline-block; padding:.5rem .75rem; border-radius:.5rem;
+  background:#ffd814; color:#111; font-weight:600; text-decoration:none;
+  box-shadow: 0 2px 0 #c7a40f;
+}
+.btn-amazon:hover{ filter:brightness(0.98); }
+.buy{ margin:.75rem 0 0; }
+
+/* Albums lists: two-column row (details + fixed-width button) */
+.album-list{ list-style:none; padding:0; margin:0; }
+.album-list .album{
+  display:grid;
+  grid-template-columns: 1fr 9.5rem;   /* text | button column (fixed width) */
+  align-items:center;
+  column-gap:.25rem;
+  padding:.5rem 0;
+  border-bottom:1px solid #1e263b;
+}
+
+/* keep your existing badge styles etc. */
+.album-list .meta{ min-width:0; } /* allow text to wrap/truncate if needed */
+
+/* button column: no extra margins */
+.album-list .buy{ margin:0; }
+
+/* smaller Amazon button */
+.album-list .btn-amazon{
+  display:inline-block;
+  width:100%;                  /* fills the 9.5rem column so all line up */
+  text-align:center;
+  font-size:.85rem;
+  padding:.35rem .5rem;
+  border-radius:.4rem;
+  background:#ffd814;
+  color:#111;
+  font-weight:600;
+  text-decoration:none;
+  box-shadow:0 2px 0 #c7a40f;
+}
+.album-list .btn-amazon:hover{ filter:brightness(0.98); }
+
+/* Responsive: stack the button under text on narrow screens */
+@media (max-width: 560px){
+  .album-list .album{
+    grid-template-columns: 1fr;
+    row-gap:.4rem;
+  }
+  .album-list .btn-amazon{ width:auto; }
+}
+

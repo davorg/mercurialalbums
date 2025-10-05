@@ -1,5 +1,26 @@
 [% page_title = "Home" %]
-<section class="hero">
-  <h1>Mercury Prize shortlists — all years</h1>
-  <p>Browse by <a href="/year/">year</a>, <a href="/artist/">artist</a>, or <a href="/album/">album</a>.</p>
+<section class="hero hero-grid">
+  <div class="hero-art">
+    <img
+      src="/assets/mercury.png"
+      alt="Mercury, the Roman messenger, DJing on twin decks"
+      width="1200" height="675"
+      loading="lazy" decoding="async">
+  </div>
+
+  <div class="hero-copy">
+    <h1>Mercury Prize shortlists — all years</h1>
+    <p>
+      Explore every shortlisted album and winner from 1992 to today.
+      Winners are clearly marked, and each year page links through to
+      the relevant artist and album pages.
+    </p>
+    <p>
+      <strong>Start browsing:</strong>
+      <a href="/year/">Years</a> · <a href="/artist/">Artists</a> · <a href="/album/">Albums</a>
+    </p>
+    <p class="fine-print">
+      An independent, non-commercial project. Corrections welcome.
+    </p>
+  </div>
 </section>

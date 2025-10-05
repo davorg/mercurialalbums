@@ -7,6 +7,15 @@
   <title>Mercurial Albums — The 1975</title>
   <meta name="description" content="Mercurial Albums — Mercury Prize shortlists and winners">
   <link rel="stylesheet" href="/assets/site.css">
+
+  <script src="https://cdn.davecross.co.uk/js/amazon-store/v1/amazon-store.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Default affiliate tag (env-var or hardcode)
+      AmazonStore.enhanceAll({ tag: 'davblog-21' });
+      // AmazonStore.renderStoreGridAll({ tag: 'davblog-21' });
+    });
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -39,19 +48,35 @@
   <main class="wrap content">
     
 <h1>The 1975</h1>
-<ul class="list">
+<ul class="album-list">
+  <li class="album">
+    <div class="meta">
+      
+      <a href="/album/i-like-it-when-you-sleep-for-you-are-so-beautiful-yet-so-unaware-of-it/">I Like It When You Sleep, for You Are So Beautiful yet So Unaware of It</a>
+      — <a href="/year/2016/">2016</a>
+    </div>
 
-  <li>
-    
-    <a href="/album/i-like-it-when-you-sleep-for-you-are-so-beautiful-yet-so-unaware-of-it/">I Like It When You Sleep, for You Are So Beautiful yet So Unaware of It</a> — <a href="/year/2016/">2016</a>
+    <p class="buy">    <a class="btn-amazon"
+       data-amazon-search="I Like It When You Sleep, for You Are So Beautiful yet So Unaware of It The 1975"
+       data-amazon-text="Search on Amazon"
+       data-amazon-mode="button">Search on Amazon</a>
+  </p>
   </li>
+  <li class="album">
+    <div class="meta">
+      
+      <a href="/album/a-brief-inquiry-into-online-relationships/">A Brief Inquiry into Online Relationships</a>
+      — <a href="/year/2019/">2019</a>
+    </div>
 
-  <li>
-    
-    <a href="/album/a-brief-inquiry-into-online-relationships/">A Brief Inquiry into Online Relationships</a> — <a href="/year/2019/">2019</a>
+    <p class="buy">    <a class="btn-amazon"
+       data-amazon-asin="B07HN88WNM"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a></p>
   </li>
 
 </ul>
+
 <p><a href="/artist/">← All artists</a></p>
 
   </main>

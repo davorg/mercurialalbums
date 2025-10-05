@@ -7,6 +7,15 @@
   <title>Mercurial Albums — Dizzee Rascal</title>
   <meta name="description" content="Mercurial Albums — Mercury Prize shortlists and winners">
   <link rel="stylesheet" href="/assets/site.css">
+
+  <script src="https://cdn.davecross.co.uk/js/amazon-store/v1/amazon-store.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Default affiliate tag (env-var or hardcode)
+      AmazonStore.enhanceAll({ tag: 'davblog-21' });
+      // AmazonStore.renderStoreGridAll({ tag: 'davblog-21' });
+    });
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -39,24 +48,46 @@
   <main class="wrap content">
     
 <h1>Dizzee Rascal</h1>
-<ul class="list">
+<ul class="album-list">
+  <li class="album">
+    <div class="meta">
+      <span class="badge">Winner</span>
+      <a href="/album/boy-in-da-corner/">Boy in da Corner</a>
+      — <a href="/year/2003/">2003</a>
+    </div>
 
-  <li>
-    <span class="badge">Winner</span>
-    <a href="/album/boy-in-da-corner/">Boy in da Corner</a> — <a href="/year/2003/">2003</a>
+    <p class="buy">    <a class="btn-amazon"
+       data-amazon-asin="B00009WVWT"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a></p>
   </li>
+  <li class="album">
+    <div class="meta">
+      
+      <a href="/album/maths-english/">Maths + English</a>
+      — <a href="/year/2007/">2007</a>
+    </div>
 
-  <li>
-    
-    <a href="/album/maths-english/">Maths + English</a> — <a href="/year/2007/">2007</a>
+    <p class="buy">    <a class="btn-amazon"
+       data-amazon-asin="B000PE0L64"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a></p>
   </li>
+  <li class="album">
+    <div class="meta">
+      
+      <a href="/album/tongue-n-cheek/">Tongue n' Cheek</a>
+      — <a href="/year/2010/">2010</a>
+    </div>
 
-  <li>
-    
-    <a href="/album/tongue-n-cheek/">Tongue n' Cheek</a> — <a href="/year/2010/">2010</a>
+    <p class="buy">    <a class="btn-amazon"
+       data-amazon-asin="B003M3UJLC"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a></p>
   </li>
 
 </ul>
+
 <p><a href="/artist/">← All artists</a></p>
 
   </main>

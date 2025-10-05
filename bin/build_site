@@ -37,6 +37,7 @@ my %site = (
 
 my $tt = Template->new({
   INCLUDE_PATH => "$Bin/../tt_lib",
+  PRE_PROCESS  => [ 'utils.tt' ],
   ENCODING     => 'utf8',
   WRAPPER      => 'layout.tt',
   VARIABLES    => \%site,
@@ -69,13 +70,9 @@ write_page(
   path     => ['year','index.html'],
 );
 for my $yr (@years) {
-  my @albums = $yr->albums->search(
-    { 'me.year_id' => $yr->id },
-    { prefetch => ['artist','year'], order_by => [ { -desc => 'me.is_winner' }, 'me.title' ] }
-  )->all;
   write_page(
     template => 'year.tt',
-    vars     => { year => $yr, albums => \@albums },
+    vars     => { year => $yr },
     path     => ['year', $yr->slug, 'index.html'],
   );
 }
@@ -88,28 +85,22 @@ write_page(
   path     => ['artist','index.html'],
 );
 for my $ar (@artists) {
-  my @albums = $schema->resultset('Album')->search(
-    { 'me.artist_id' => $ar->id },
-    { prefetch => ['year'], order_by => ['year.year', 'me.title'] }
-  )->all;
   write_page(
     template => 'artist.tt',
-    vars     => { artist => $ar, albums => \@albums },
+    vars     => { artist => $ar },
     path     => ['artist', $ar->slug, 'index.html'],
   );
 }
 
 # Albums
-my @albums_all = $schema->resultset('Album')->search(
-  {}, { prefetch => ['artist','year'], order_by => ['me.title','artist.name'] }
-)->all;
+my @albums = $schema->resultset('Album')->sorted_albums;
 write_page(
   template => 'albums_index.tt',
-  vars     => { albums => \@albums_all },
+  vars     => { albums => \@albums },
   path     => ['album','index.html'],
 );
 
-for my $al (@albums_all) {
+for my $al (@albums) {
   write_page(
     template => 'album.tt',
     vars     => {

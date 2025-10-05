@@ -7,6 +7,15 @@
   <title>Mercurial Albums — Lost Horizons</title>
   <meta name="description" content="Mercurial Albums — Mercury Prize shortlists and winners">
   <link rel="stylesheet" href="/assets/site.css">
+
+  <script src="https://cdn.davecross.co.uk/js/amazon-store/v1/amazon-store.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Default affiliate tag (env-var or hardcode)
+      AmazonStore.enhanceAll({ tag: 'davblog-21' });
+      // AmazonStore.renderStoreGridAll({ tag: 'davblog-21' });
+    });
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -40,6 +49,15 @@
     
 <h1>Lost Horizons</h1>
 <p>by <a href="/artist/lemon-jelly/">Lemon Jelly</a> — <a href="/year/2003/">2003</a></p>
+
+
+
+<p class="buy">
+    <a class="btn-amazon"
+       data-amazon-asin="B00006C77O"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a>
+</p>
 
 <p><a href="/album/">← All albums</a></p>
 

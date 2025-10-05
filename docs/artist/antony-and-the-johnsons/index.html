@@ -7,6 +7,15 @@
   <title>Mercurial Albums — Antony and the Johnsons</title>
   <meta name="description" content="Mercurial Albums — Mercury Prize shortlists and winners">
   <link rel="stylesheet" href="/assets/site.css">
+
+  <script src="https://cdn.davecross.co.uk/js/amazon-store/v1/amazon-store.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Default affiliate tag (env-var or hardcode)
+      AmazonStore.enhanceAll({ tag: 'davblog-21' });
+      // AmazonStore.renderStoreGridAll({ tag: 'davblog-21' });
+    });
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -39,14 +48,22 @@
   <main class="wrap content">
     
 <h1>Antony and the Johnsons</h1>
-<ul class="list">
+<ul class="album-list">
+  <li class="album">
+    <div class="meta">
+      <span class="badge">Winner</span>
+      <a href="/album/i-am-a-bird-now/">I Am a Bird Now</a>
+      — <a href="/year/2005/">2005</a>
+    </div>
 
-  <li>
-    <span class="badge">Winner</span>
-    <a href="/album/i-am-a-bird-now/">I Am a Bird Now</a> — <a href="/year/2005/">2005</a>
+    <p class="buy">    <a class="btn-amazon"
+       data-amazon-asin="B0007GFG5Q"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a></p>
   </li>
 
 </ul>
+
 <p><a href="/artist/">← All artists</a></p>
 
   </main>

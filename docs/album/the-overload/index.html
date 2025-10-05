@@ -7,6 +7,15 @@
   <title>Mercurial Albums — The Overload</title>
   <meta name="description" content="Mercurial Albums — Mercury Prize shortlists and winners">
   <link rel="stylesheet" href="/assets/site.css">
+
+  <script src="https://cdn.davecross.co.uk/js/amazon-store/v1/amazon-store.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Default affiliate tag (env-var or hardcode)
+      AmazonStore.enhanceAll({ tag: 'davblog-21' });
+      // AmazonStore.renderStoreGridAll({ tag: 'davblog-21' });
+    });
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -40,6 +49,15 @@
     
 <h1>The Overload</h1>
 <p>by <a href="/artist/yard-act/">Yard Act</a> — <a href="/year/2022/">2022</a></p>
+
+
+
+<p class="buy">
+    <a class="btn-amazon"
+       data-amazon-asin="B09FNWX1KX"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a>
+</p>
 
 <p><a href="/album/">← All albums</a></p>
 
