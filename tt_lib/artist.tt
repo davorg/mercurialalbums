@@ -1,5 +1,5 @@
-[% page_title = artist %]
-<h1>[% artist %]</h1>
+[% page_title = artist.name %]
+<h1>[% artist.name %]</h1>
 <ul class="list">
 [% FOREACH a IN albums %]
   <li>

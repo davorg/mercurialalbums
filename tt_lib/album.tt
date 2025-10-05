@@ -1,5 +1,5 @@
-[% page_title = title %]
-<h1>[% title %]</h1>
-<p>by <a href="[% artist.url_path %]/">[% artist.name %]</a> — <a href="[% year.url_path %]/">[% year.year %]</a></p>
-[% IF is_winner %]<p><span class="badge">Mercury Prize Winner</span></p>[% END %]
+[% page_title = album.title %]
+<h1>[% album.title %]</h1>
+<p>by <a href="[% album.artist.url_path %]/">[% album.artist.name %]</a> — <a href="[% album.year.url_path %]/">[% album.year.year %]</a></p>
+[% IF album.is_winner %]<p><span class="badge">Mercury Prize Winner</span></p>[% END %]
 <p><a href="/album/">← All albums</a></p>

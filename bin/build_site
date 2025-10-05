@@ -81,7 +81,7 @@ for my $yr (@years) {
 }
 
 # Artists
-my @artists = $schema->resultset('Artist')->search({}, { order_by => 'sort_name' })->all;
+my @artists = $schema->resultset('Artist')->sorted_artists->all;
 write_page(
   template => 'artists_index.tt',
   vars     => { artists => \@artists },
@@ -94,7 +94,7 @@ for my $ar (@artists) {
   )->all;
   write_page(
     template => 'artist.tt',
-    vars     => { artist => $ar->name, albums => \@albums },
+    vars     => { artist => $ar, albums => \@albums },
     path     => ['artist', $ar->slug, 'index.html'],
   );
 }
@@ -113,10 +113,7 @@ for my $al (@albums_all) {
   write_page(
     template => 'album.tt',
     vars     => {
-      title    => $al->title,
-      is_winner=> $al->is_winner ? 1 : 0,
-      artist   => $al->artist,
-      year     => $al->year,
+      album => $al,
     },
     path     => ['album', $al->slug, 'index.html'],
   );
