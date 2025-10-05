@@ -17,7 +17,7 @@ use Mercurial::Schema;
 binmode STDOUT, ':encoding(UTF-8)';
 binmode STDERR, ':encoding(UTF-8)';
 
-my ($db, $out) = ('mercurialalbums.db', 'site');
+my ($db, $out) = ('db/mercurial.db', 'docs');
 GetOptions(
   'db=s'  => \$db,
   'out=s' => \$out,
@@ -34,20 +34,6 @@ my $tt = Template->new({
   WRAPPER      => 'layout.tt',
 }) or die Template->error;
 
-sub slug {
-  my ($s) = @_;
-
-  # special case - thanks Ed!
-  return 'divide' if $s eq '÷';
-
-  $s //= '';
-  $s = unidecode($s);
-  $s =~ s/['’]//g;
-  $s =~ s/[^A-Za-z0-9]+/-/g;
-  $s =~ s/-+/-/g;
-  $s =~ s/^-|-$//g;
-  return lc $s;
-}
 sub write_page {
   my (%args) = @_;
   my $path = File::Spec->catfile($out, @{$args{path}});
@@ -81,26 +67,18 @@ write_page(
 my @years = $schema->resultset('Year')->search({}, { order_by => { -desc => 'year' } })->all;
 write_page(
   template => 'years_index.tt',
-  vars     => { %site, years => [ map { { id => $_->id, year => $_->year } } @years ] },
+  vars     => { %site, years => \@years },
   path     => ['year','index.html'],
 );
 for my $yr (@years) {
-  my @albums = $schema->resultset('Album')->search(
+  my @albums = $yr->albums->search(
     { 'me.year_id' => $yr->id },
     { prefetch => ['artist','year'], order_by => [ { -desc => 'me.is_winner' }, 'me.title' ] }
   )->all;
-  my @alist = map {
-    +{
-      title     => $_->title,
-      is_winner => $_->is_winner ? 1 : 0,
-      artist    => { id => $_->artist->id, name => $_->artist->name, slug => slug($_->artist->name) },
-      album     => { id => $_->id, slug => slug($_->title) },
-    }
-  } @albums;
   write_page(
     template => 'year.tt',
-    vars     => { %site, year => $yr->year, albums => \@alist },
-    path     => ['year', $yr->year, 'index.html'],
+    vars     => { %site, year => $yr, albums => \@albums },
+    path     => ['year', $yr->slug, 'index.html'],
   );
 }
 
@@ -108,7 +86,7 @@ for my $yr (@years) {
 my @artists = $schema->resultset('Artist')->search({}, { order_by => 'sort_name' })->all;
 write_page(
   template => 'artists_index.tt',
-  vars     => { %site, artists => [ map { { id => $_->id, name => $_->name, slug => slug($_->name) } } @artists ] },
+  vars     => { %site, artists => \@artists },
   path     => ['artist','index.html'],
 );
 for my $ar (@artists) {
@@ -116,18 +94,10 @@ for my $ar (@artists) {
     { 'me.artist_id' => $ar->id },
     { prefetch => ['year'], order_by => ['year.year', 'me.title'] }
   )->all;
-  my @alist = map {
-    +{
-      title     => $_->title,
-      is_winner => $_->is_winner ? 1 : 0,
-      year      => $_->year->year,
-      album     => { id => $_->id, slug => slug($_->title) },
-    }
-  } @albums;
   write_page(
     template => 'artist.tt',
-    vars     => { %site, artist => $ar->name, albums => \@alist },
-    path     => ['artist', slug($ar->name), 'index.html'],
+    vars     => { %site, artist => $ar->name, albums => \@albums },
+    path     => ['artist', $ar->slug, 'index.html'],
   );
 }
 
@@ -137,15 +107,7 @@ my @albums_all = $schema->resultset('Album')->search(
 )->all;
 write_page(
   template => 'albums_index.tt',
-  vars     => { %site, albums => [ map {
-    +{
-      title  => $_->title,
-      slug   => slug($_->title),
-      artist => { name => $_->artist->name, slug => slug($_->artist->name) },
-      year   => $_->year->year,
-      is_winner => $_->is_winner ? 1 : 0,
-    }
-  } @albums_all ] },
+  vars     => { %site, albums => \@albums_all },
   path     => ['album','index.html'],
 );
 say scalar @albums_all, ' albums found';
@@ -155,10 +117,10 @@ for my $al (@albums_all) {
     vars     => { %site,
       title    => $al->title,
       is_winner=> $al->is_winner ? 1 : 0,
-      artist   => { name => $al->artist->name, slug => slug($al->artist->name) },
-      year     => $al->year->year,
+      artist   => $al->artist,
+      year     => $al->year,
     },
-    path     => ['album', slug($al->title), 'index.html'],
+    path     => ['album', $al->slug, 'index.html'],
   );
 }
 

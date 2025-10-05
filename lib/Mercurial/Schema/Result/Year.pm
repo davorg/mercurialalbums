@@ -93,6 +93,10 @@ __PACKAGE__->has_many(
 # Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-02 11:23:47
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:gKu2/50V1BjBtS2Y8r/sCA
 
+with 'Mercurial::Role::Defaults';
+
+sub slug_type      { 'year' }
+sub slug_attribute { 'year' }
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 __PACKAGE__->meta->make_immutable;

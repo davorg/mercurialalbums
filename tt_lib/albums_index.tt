@@ -4,9 +4,9 @@
 [% FOREACH a IN albums %]
   <li>
     [% IF a.is_winner %]<span class="badge">Winner</span>[% END %]
-    <a href="/album/[% a.slug %]/">[% a.title %]</a>
-    by <a href="/artist/[% a.artist.slug %]/">[% a.artist.name %]</a>
-    — <a href="/year/[% a.year %]/">[% a.year %]</a>
+    <a href="[% a.url_path %]/">[% a.title %]</a>
+    by <a href="[% a.artist.url_path %]/">[% a.artist.name %]</a>
+    — <a href="[% a.year.url_path %]/">[% a.year.year %]</a>
   </li>
 [% END %]
 </ul>
