@@ -1,0 +1,5 @@
+[% page_title = title %]
+<h1>[% title %]</h1>
+<p>by <a href="/artist/[% artist.slug %]/">[% artist.name %]</a> — <a href="/year/[% year %]/">[% year %]</a></p>
+[% IF is_winner %]<p><span class="badge">Mercury Prize Winner</span></p>[% END %]
+<p><a href="/album/">← All albums</a></p>

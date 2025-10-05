@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+DB=${1:-mercurialalbums.db}
+OUT=${2:-site}
+
+# Build
+"$(dirname "$0")/build_site" --db "$DB" --out "$OUT"
+
+# Serve with http_this if available, otherwise fall back to Python http.server
+if command -v http_this >/dev/null 2>&1; then
+  echo "Serving with http_this on http://localhost:8000 (dir: $OUT)"
+  cd "$OUT" && http_this --port 8000
+else
+  echo "http_this not found; falling back to python3 -m http.server 8000"
+  cd "$OUT" && python3 -m http.server 8000
+fi

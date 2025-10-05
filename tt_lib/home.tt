@@ -1,0 +1,5 @@
+[% page_title = "Home" %]
+<section class="hero">
+  <h1>Mercury Prize shortlists — all years</h1>
+  <p>Browse by <a href="/year/">year</a>, <a href="/artist/">artist</a>, or <a href="/album/">album</a>.</p>
+</section>

@@ -1,0 +1,30 @@
+[%# templates/layout.tt;
+  USE date; %]
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>[% title %][% IF page_title %] — [% page_title %][% END %]</title>
+  <meta name="description" content="Mercurial Albums — Mercury Prize shortlists and winners">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="/">Mercurial Albums</a>
+      <nav class="nav">
+        [% FOREACH n IN nav %]
+          <a href="[% n.href %]">[% n.label %]</a>
+        [% END %]
+      </nav>
+    </div>
+  </header>
+  <main class="wrap content">
+    [% content %]
+  </main>
+  <footer class="site-footer">
+    <div class="wrap">© [% date.format('%Y') %] Mercurial Albums</div>
+  </footer>
+</body>
+</html>

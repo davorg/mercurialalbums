@@ -1,0 +1,11 @@
+[% page_title = artist %]
+<h1>[% artist %]</h1>
+<ul class="list">
+[% FOREACH a IN albums %]
+  <li>
+    [% IF a.is_winner %]<span class="badge">Winner</span>[% END %]
+    <a href="/album/[% a.album.slug %]/">[% a.title %]</a> — <a href="/year/[% a.year %]/">[% a.year %]</a>
+  </li>
+[% END %]
+</ul>
+<p><a href="/artist/">← All artists</a></p>

@@ -1,0 +1,7 @@
+[% page_title = "Artists" %]
+<h1>Artists</h1>
+<ul class="list">
+[% FOREACH a IN artists %]
+  <li><a href="/artist/[% a.slug %]/">[% a.name %]</a></li>
+[% END %]
+</ul>

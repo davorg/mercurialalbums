@@ -1,0 +1,7 @@
+[% page_title = "Years" %]
+<h1>Years</h1>
+<ul class="grid">
+[% FOREACH y IN years %]
+  <li><a class="card" href="/year/[% y.year %]/">[% y.year %]</a></li>
+[% END %]
+</ul>
