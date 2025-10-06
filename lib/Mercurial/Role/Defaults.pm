@@ -25,7 +25,7 @@ sub og_description {
 
 sub og_url {
   my $self = shift;
-  return $self->domain . '/' . $self->url_path;
+  return $self->domain . $self->url_path;
 }
 
 sub og_type { 'website' }
@@ -52,7 +52,7 @@ sub slug {
 sub url_path {
   my $self = shift;
 
-  my $path = '';
+  my $path = '/';
   $path .= $self->slug_type . '/' if $self->slug_type;
   $path .= $self->slug if $self->slug;
 
