@@ -9,6 +9,27 @@ use Text::Unidecode;
 
 requires 'slug_attribute', 'slug_type';
 
+sub domain {
+  return 'https://mercurialalbums.com';
+}
+
+sub og_image {
+  my $self = shift;
+
+  return $self->domain . '/assets/mercury_og.png';
+}
+
+sub og_description {
+  shift->og_title;
+}
+
+sub og_url {
+  my $self = shift;
+  return $self->domain . '/' . $self->url_path;
+}
+
+sub og_type { 'website' }
+
 sub slug {
   my $self = shift;
 
@@ -31,7 +52,11 @@ sub slug {
 sub url_path {
   my $self = shift;
 
-  return '/' . $self->slug_type . '/' . $self->slug;
+  my $path = '';
+  $path .= $self->slug_type . '/' if $self->slug_type;
+  $path .= $self->slug if $self->slug;
+
+  return $path;
 }
 
 1;

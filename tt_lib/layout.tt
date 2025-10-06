@@ -1,5 +1,7 @@
-[%# templates/layout.tt;
-  USE date; %]
+[%# templates/layout.tt -%]
+[% USE date;
+   object = page OR year OR album OR artist;
+ -%]
 <!doctype html>
 <html lang="en-GB">
 <head>
@@ -8,6 +10,8 @@
   <title>[% title %][% IF page_title %] — [% page_title %][% END %]</title>
   <meta name="description" content="Mercurial Albums — Mercury Prize shortlists and winners">
   <link rel="stylesheet" href="/assets/site.css">
+
+[% object.tags %]
 
   <script src="https://cdn.davecross.co.uk/js/amazon-store/v1/amazon-store.min.js" defer></script>
   <script>
@@ -44,7 +48,7 @@
     [% content %]
   </main>
   <footer class="site-footer">
-    <div class="wrap">© [% date.format('%Y') %] Mercurial Albums</div>
+    <div class="wrap">© [% date.format(date.now, '%Y') %] Mercurial Albums</div>
   </footer>
 </body>
 </html>

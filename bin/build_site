@@ -12,6 +12,7 @@ use File::Path qw(make_path);
 use File::Spec;
 use Template;
 use Mercurial::Schema;
+use Mercurial::Page;
 
 binmode STDOUT, ':encoding(UTF-8)';
 binmode STDERR, ':encoding(UTF-8)';
@@ -54,19 +55,43 @@ sub write_page {
 # say "Wrote $path";
 }
 
+my %pages = (
+  index => {
+    path => '',
+    title    => 'Mercurial Albums',
+    description => 'The history of the Mercury Prize',
+  },
+  years => {
+    path => 'year/',
+    title    => 'Years',
+    description => 'The years of the Mercury Prize',
+  },
+  artists => {
+    path => 'artist/',
+    title    => 'Artists',
+    description => 'Every artist that has been nominated for a Mercury Prize',
+  },
+  albums => {
+    path => 'album/',
+    title    => 'Albums',
+    description => 'Every album that has been nominated for a Mercury Prize',
+  },
+);
 
 # Home
+my $page = Mercurial::Page->new($pages{index});
 write_page(
   template => 'home.tt',
-  vars     => { },
+  vars     => { page => $page },
   path     => ['index.html'],
 );
 
 # Years
+$page = Mercurial::Page->new($pages{years});
 my @years = $schema->resultset('Year')->search({}, { order_by => { -desc => 'year' } })->all;
 write_page(
   template => 'years_index.tt',
-  vars     => { years => \@years },
+  vars     => { page => $page, years => \@years },
   path     => ['year','index.html'],
 );
 for my $yr (@years) {
@@ -78,10 +103,11 @@ for my $yr (@years) {
 }
 
 # Artists
+$page = Mercurial::Page->new($pages{artists});
 my @artists = $schema->resultset('Artist')->sorted_artists->all;
 write_page(
   template => 'artists_index.tt',
-  vars     => { artists => \@artists },
+  vars     => { page => $page, artists => \@artists },
   path     => ['artist','index.html'],
 );
 for my $ar (@artists) {
@@ -93,10 +119,11 @@ for my $ar (@artists) {
 }
 
 # Albums
+$page = Mercurial::Page->new($pages{albums});
 my @albums = $schema->resultset('Album')->by_title;
 write_page(
   template => 'albums_index.tt',
-  vars     => { albums => \@albums },
+  vars     => { page => $page, albums => \@albums },
   path     => ['album','index.html'],
 );
 

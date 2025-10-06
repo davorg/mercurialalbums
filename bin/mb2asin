@@ -1,0 +1,227 @@
+#!/usr/bin/env -S perl -CS
+use strict;
+use warnings;
+use utf8;
+use feature 'say';
+
+use FindBin qw($Bin);
+use lib "$Bin/../lib";
+
+use Getopt::Long qw(GetOptions);
+use JSON::MaybeXS qw(decode_json encode_json);
+use HTTP::Tiny;
+use Time::HiRes qw(sleep);
+use Text::Unidecode qw(unidecode);
+use URI::Escape qw(uri_escape_utf8);
+
+use Mercurial::Schema;
+
+# ------------------------------------------------------------------------------
+# Options
+# ------------------------------------------------------------------------------
+my $db_path        = 'db/mercurial.db';
+my $dry_run        = 0;
+my $limit          = 0;            # process all by default
+my $artist_filter  = '';
+my $sleep_secs     = 1.1;          # MB etiquette: ~1 req/sec
+my $associate_tag  = $ENV{AMAZON_ASSOCIATE_TAG} // '';  # e.g. mercurialalbums-21
+my $ua_contact     = $ENV{MB_CONTACT} // 'mailto:dave@Davecross.co.uk'; # put a real contact!
+
+GetOptions(
+  'db=s'       => \$db_path,
+  'dry-run!'   => \$dry_run,
+  'limit=i'    => \$limit,
+  'artist=s'   => \$artist_filter,
+  'sleep=f'    => \$sleep_secs,
+) or die "Usage: $0 [--db path] [--dry-run] [--limit N] [--artist NAME] [--sleep 1.1]\n";
+
+# ------------------------------------------------------------------------------
+# DBIC
+# ------------------------------------------------------------------------------
+my $schema = Mercurial::Schema->get_schema($db_path);
+
+# albums lacking an Amazon GB link
+my $albums_rs = $schema->resultset('Album')->search(
+  {
+    ($artist_filter ? ('artist.name' => $artist_filter) : ()),
+  },
+  {
+    join      => 'artist',
+    prefetch  => ['artist','year'],
+    order_by  => ['artist.name','me.title'],
+  }
+);
+
+# Exclude those that already have a GB amazon link
+my @todo;
+while (my $al = $albums_rs->next) {
+  my $has_link = $schema->resultset('AlbumRetailLink')->search({
+    album_id => $al->id, retailer => 'amazon', country => 'GB'
+  })->count;
+  push @todo, $al unless $has_link;
+}
+@todo = @todo[0 .. $limit-1] if $limit && @todo > $limit;
+
+say "Albums to process: " . scalar(@todo) . ($dry_run ? " (dry-run)" : "");
+
+# ------------------------------------------------------------------------------
+# HTTP client (MusicBrainz)
+# ------------------------------------------------------------------------------
+my $http = HTTP::Tiny->new(
+  timeout => 20,
+  agent   => "MercurialAlbums/1.0 ($ua_contact)"
+);
+
+sub _qs {
+  my (%p) = @_;
+  return join '&', map {
+    my $k = uri_escape_utf8($_);
+    my $v = uri_escape_utf8($p{$_});
+    "$k=$v"
+  } sort keys %p;
+}
+
+sub mb_get {
+  my ($entity, %params) = @_;
+  # Always ask for JSON
+  $params{fmt} ||= 'json';
+
+  my $url = "https://musicbrainz.org/ws/2/$entity?" . _qs(%params);
+
+  my $res = $http->get($url);
+
+  # If we’re rate-limited, honour Retry-After and try once more
+  if (!$res->{success} && $res->{status} == 503) {
+    my $ra = $res->{headers}{'retry-after'} // 1.5;
+    sleep($ra + 0.2);
+    $res = $http->get($url);
+  }
+
+  unless ($res->{success}) {
+    die "$res->{status} $res->{reason}\n$url\n" . ($res->{content} // '') . "\n";
+  }
+  return decode_json($res->{content});
+}
+
+
+# ------------------------------------------------------------------------------
+# Helpers
+# ------------------------------------------------------------------------------
+sub norm {
+  my ($s) = @_;
+  $s = lc unidecode($s // '');
+  $s =~ s/[\[\]\{\}\(\)]/ /g;
+  $s =~ s/[-–—:;\/]/ /g;
+  $s =~ s/\b(deluxe|expanded|remaster(?:ed)?|anniversary|edition|reissue|bonus)\b//g;
+  $s =~ s/[^a-z0-9]+/ /g;
+  $s =~ s/^\s+|\s+$//g;
+  $s =~ s/\s+/ /g;
+  return $s;
+}
+
+sub score_release {
+  my ($artist, $album, $year, $rel) = @_;
+  my $t_artist = norm(join ' ', map { $_->{artist}{name} // () } @{$rel->{'artist-credit'} // []});
+  my $t_title  = norm($rel->{title} // '');
+  my $want_a   = norm($artist);
+  my $want_al  = norm($album);
+
+  my $s = 0;
+  $s += 0.6 if index($t_artist, $want_a) >= 0;
+  $s += 0.6 if index($t_title,  $want_al) >= 0;
+
+  # prefer UK releases and the target year +/- 1
+  my $country = $rel->{country} // '';
+  $s += 0.3 if $country eq 'GB';
+
+  if (my $date = $rel->{date}) {
+    if ($date =~ /^(\d{4})/) {
+      my $dy = abs($1 - ($year||0));
+      $s += ($dy==0 ? 0.25 : $dy==1 ? 0.15 : 0);
+    }
+  }
+  # prefer an explicit ASIN on the release
+  $s += 0.4 if defined $rel->{asin} && length $rel->{asin};
+
+  return $s;
+}
+
+sub amazon_url_gb {
+  my ($asin) = @_;
+  return unless $asin;
+  my $tag = $associate_tag ? "?tag=$associate_tag" : "";
+  return "https://www.amazon.co.uk/dp/$asin$tag";
+}
+
+# ------------------------------------------------------------------------------
+# Main loop
+# ------------------------------------------------------------------------------
+ALBUM:
+for my $al (@todo) {
+  my $artist = $al->artist->name;
+  my $title  = $al->title;
+  my $year   = $al->year->year;
+
+  # Build a release search query
+  # https://musicbrainz.org/doc/MusicBrainz_API/Search#Release
+  my $q = sprintf('artist:"%s" AND release:"%s"', $artist, $title);
+
+  my $data = mb_get(
+    'release',
+    query => $q,
+    limit => 25,
+    inc   => 'artist-credits release-groups',
+  );
+  sleep($sleep_secs);
+
+  my $releases = $data->{releases} // [];
+  unless (@$releases) {
+    say "[MISS] $artist — $title";
+    next;
+  }
+
+  # Score candidates and pick the best
+  my @scored = map { [ score_release($artist,$title,$year,$_)+0, $_ ] } @$releases;
+  @scored = sort { $b->[0] <=> $a->[0] } @scored;
+  my ($score, $best) = @{$scored[0]};
+
+  my $asin = $best->{asin};
+  unless ($asin) {
+    # Sometimes ASIN is attached to a different release (same group). Try fetching the group’s releases.
+    if (my $rgid = $best->{'release-group'}{id}) {
+      my $rg = mb_get("release-group/$rgid", inc => 'releases', limit => '100');
+      sleep($sleep_secs);
+      if (my $rels = $rg->{releases}) {
+        my @alt = grep { $_->{asin} } @$rels;
+        if (@alt) {
+          # prefer GB if present
+          my ($gb) = grep { ($_->{country}//'') eq 'GB' } @alt;
+          $asin = ($gb // $alt[0])->{asin};
+        }
+      }
+    }
+  }
+
+  my $summary = sprintf "[%s] %s — %s  score=%.2f",
+    ($asin ? 'HIT' : 'MISS'), $artist, $title, $score;
+
+  if ($asin) {
+    my $url = amazon_url_gb($asin);
+    say "$summary  asin=$asin  $url";
+
+    next if $dry_run;
+
+    $schema->resultset('AlbumRetailLink')->update_or_create(
+      {
+        album_id => $al->id,
+        retailer => 'amazon',
+        country  => 'GB',
+        asin     => $asin,
+        url      => $url,
+      },
+    );
+  } else {
+    say $summary;
+  }
+}
+

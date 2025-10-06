@@ -101,7 +101,9 @@ __PACKAGE__->has_many(
 # Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-05 15:06:47
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+2GoqGsuhRWxpYH4SSnv6A
 
-with 'Mercurial::Role::Defaults';
+with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags';
+
+sub og_title { shift->name }
 
 sub slug_type      { 'artist' }
 sub slug_attribute { 'name' }

@@ -149,10 +149,12 @@ __PACKAGE__->belongs_to(
 # Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-05 15:06:47
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Z9LQ1RUjCBYyB/Nga9dCAw
 
-with 'Mercurial::Role::Defaults';
+with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags';
 
 sub slug_type      { 'album' }
 sub slug_attribute { 'title' }
+
+sub og_title { shift->title };
 
 sub amazon_asin {
   my $self = shift;

@@ -1,0 +1,13 @@
+[% MACRO amazon_button(album) BLOCK;
+     IF album.amazon_asin -%]
+    <a class="btn-amazon"
+       data-amazon-asin="[% album.amazon_asin | html %]"
+       data-amazon-text="Buy on Amazon"
+       data-amazon-mode="button">Buy on Amazon</a>
+  [%- ELSE -%]
+    <a class="btn-amazon"
+       data-amazon-search="[% (album.title _ ' ' _ album.artist.name) | html %]"
+       data-amazon-text="Search on Amazon"
+       data-amazon-mode="button">Search on Amazon</a>
+  [% END;
+   END -%]
