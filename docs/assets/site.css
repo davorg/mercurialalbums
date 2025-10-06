@@ -100,18 +100,36 @@ a:hover{ text-decoration:underline }
 .btn-amazon:hover{ filter:brightness(0.98); }
 .buy{ margin:.75rem 0 0; }
 
+.album-hero{
+  margin: 0 0 1rem 0;
+}
+.album-cover-lg{
+  display:block;
+  max-width: min(520px, 100%);
+  height:auto;
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.25);
+}
+
 /* Albums lists: two-column row (details + fixed-width button) */
 .album-list{ list-style:none; padding:0; margin:0; }
 .album-list .album{
   display:grid;
-  grid-template-columns: 1fr 9.5rem;   /* text | button column (fixed width) */
+  grid-template-columns: 64px 1fr 9.5rem;   /* text | button column (fixed width) */
   align-items:center;
-  column-gap:.25rem;
+  column-gap:.75rem;
   padding:.5rem 0;
   border-bottom:1px solid #1e263b;
 }
 
 /* keep your existing badge styles etc. */
+.album-list .cover{
+  width:64px; height:64px; display:flex; align-items:center; justify-content:center;
+}
+.album-list .album-cover{
+  width:64px; height:64px; object-fit:cover; border-radius:.5rem; display:block;
+  background:#0f172a;      /* hides flash if image loads slowly */
+}
 .album-list .meta{ min-width:0; } /* allow text to wrap/truncate if needed */
 
 /* button column: no extra margins */
@@ -136,9 +154,12 @@ a:hover{ text-decoration:underline }
 /* Responsive: stack the button under text on narrow screens */
 @media (max-width: 560px){
   .album-list .album{
-    grid-template-columns: 1fr;
+    grid-template-columns: i48px 1fr;
     row-gap:.4rem;
   }
+  .album-list .buy{ grid-column: 2 / -1; }
+  .album-list .cover{ width:48px; height:48px; }
+  .album-list .album-cover{ width:48px; height:48px; }
   .album-list .btn-amazon{ width:auto; }
 }
 

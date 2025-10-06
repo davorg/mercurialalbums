@@ -1,3 +1,13 @@
+[% IF album.amazon_asin -%]
+  <figure class="album-hero">
+    <img
+      class="album-cover-lg"
+      src="/assets/albums/[% album.amazon_asin | html %].jpg"
+      alt="Cover of [% title | html %] by [% artist.name | html %]"
+      loading="eager" decoding="async">
+  </figure>
+[% END -%]
+
 [% page_title = album.title %]
 <h1>[% album.title %]</h1>
 <p>by <a href="[% album.artist.url_path %]/">[% album.artist.name %]</a> — <a href="[% album.year.url_path %]/">[% album.year.year %]</a></p>

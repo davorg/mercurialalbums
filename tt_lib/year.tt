@@ -3,6 +3,14 @@
 <ul class="album-list">
 [% FOREACH a IN year.albums_rs.sorted_albums %]
   <li class="album">
+    <div class="cover">
+[%   IF a.amazon_asin -%]
+        <img class="album-cover"
+             src="/assets/albums/[% a.amazon_asin | html %].jpg"
+             alt="Cover of [% a.title | html %] by [% a.artist.name | html %]"
+             width="64" height="64" loading="lazy" decoding="async">
+[%   END -%]
+    </div>
     <div class="meta">
 [%   IF a.is_winner %]<span class="badge">Winner</span>[% END %]
     <a href="[% a.url_path %]/">[% a.title %]</a>
