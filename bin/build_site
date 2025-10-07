@@ -11,6 +11,7 @@ use Getopt::Long qw(GetOptions);
 use File::Path qw(make_path);
 use File::Spec;
 use Template;
+use Time::Piece;
 use Mercurial::Schema;
 use Mercurial::Page;
 
@@ -78,6 +79,8 @@ my %pages = (
   },
 );
 
+my @urls;
+
 # Home
 my $page = Mercurial::Page->new($pages{index});
 write_page(
@@ -85,6 +88,7 @@ write_page(
   vars     => { page => $page },
   path     => ['index.html'],
 );
+push @urls, $page->og_url;
 
 # Years
 $page = Mercurial::Page->new($pages{years});
@@ -94,12 +98,15 @@ write_page(
   vars     => { page => $page, years => \@years },
   path     => ['year','index.html'],
 );
+push @urls, $page->og_url;
+
 for my $yr (@years) {
   write_page(
     template => 'year.tt',
     vars     => { year => $yr },
     path     => ['year', $yr->slug, 'index.html'],
   );
+  push @urls, $yr->og_url;
 }
 
 # Artists
@@ -110,12 +117,15 @@ write_page(
   vars     => { page => $page, artists => \@artists },
   path     => ['artist','index.html'],
 );
+push @urls, $page->og_url;
+
 for my $ar (@artists) {
   write_page(
     template => 'artist.tt',
     vars     => { artist => $ar },
     path     => ['artist', $ar->slug, 'index.html'],
   );
+  push @urls, $ar->og_url;
 }
 
 # Albums
@@ -126,6 +136,7 @@ write_page(
   vars     => { page => $page, albums => \@albums },
   path     => ['album','index.html'],
 );
+push @urls, $page->og_url;
 
 for my $al (@albums) {
   write_page(
@@ -135,6 +146,36 @@ for my $al (@albums) {
     },
     path     => ['album', $al->slug, 'index.html'],
   );
+  push @urls, $al->og_url;
 }
 
+make_sitemap($out, @urls);
+
 say "Output in '$out/'";
+
+sub make_sitemap {
+  my ($dir, @urls) = @_;
+
+  my $date = localtime->ymd;
+
+  my $sitemap = "$dir/sitemap.xml";
+
+  open my $sitemap_fh, '>', $sitemap
+    or die "[$sitemap] $!\n";
+
+  print $sitemap_fh qq[<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n];
+
+  for ( @urls ) {
+    $_ .= '/' unless m|/$|;
+
+    print $sitemap_fh <<EOF_URL;
+  <url>
+    <loc>$_</loc>
+    <lastmod>$date</lastmod>
+  </url>
+EOF_URL
+  }
+
+  print $sitemap_fh "</urlset>\n";
+}
