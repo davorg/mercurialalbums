@@ -101,12 +101,24 @@ __PACKAGE__->has_many(
 # Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-05 15:06:47
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+2GoqGsuhRWxpYH4SSnv6A
 
-with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags';
+with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags', 'MooX::Role::JSON_LD';
 
 sub og_title { shift->name }
 
 sub slug_type      { 'artist' }
 sub slug_attribute { 'name' }
+
+sub json_ld_type { 'MusicGroup' }
+
+sub json_ld_fields {
+  my $self = shift;
+  return [
+    'name',
+    { '@id' => sub { $self->og_url . '#artist' } },
+    { url => sub { $self->og_url } },
+    { mainEntityOfPage => sub { $self->og_url } },
+  ],
+}
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 __PACKAGE__->meta->make_immutable;

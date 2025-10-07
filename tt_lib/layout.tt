@@ -21,6 +21,9 @@
       // AmazonStore.renderStoreGridAll({ tag: 'davblog-21' });
     });
   </script>
+[% IF object.can('json_ld_wrapped');
+     object.json_ld_wrapped;
+   END %]
 </head>
 <body>
   <header class="site-header">

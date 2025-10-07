@@ -93,12 +93,25 @@ __PACKAGE__->has_many(
 # Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-02 11:23:47
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:gKu2/50V1BjBtS2Y8r/sCA
 
-with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags';
+with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags', 'MooX::Role::JSON_LD';
 
 sub og_title { shift->year }
 
 sub slug_type      { 'year' }
 sub slug_attribute { 'year' }
+
+sub json_ld_type { 'CollectionPage' }
+
+sub json_ld_fields {
+  [
+    { name => sub { 'Mercutry Prize ' . $_[0]->year . ' shortlist' } },
+    { url  => 'og_url' },
+    { inLanguage => sub { 'en-GB' } },
+    { isPartOf => sub { { '@type' => 'WebSite', name => 'Mercurial Albums', url => 'https://mercurialalbums.com/' } } },
+    { about => sub { { '@type' => 'Thing', name => 'Mercury Prize' } } },
+    { temporalCoverage => 'year' },
+  ];
+}
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
 __PACKAGE__->meta->make_immutable;

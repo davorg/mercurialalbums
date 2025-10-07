@@ -149,7 +149,7 @@ __PACKAGE__->belongs_to(
 # Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-05 15:06:47
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Z9LQ1RUjCBYyB/Nga9dCAw
 
-with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags';
+with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags', 'MooX::Role::JSON_LD';
 
 sub slug_type      { 'album' }
 sub slug_attribute { 'title' }
@@ -167,6 +167,34 @@ sub amazon_asin {
   return unless $asin;
 
   return $asin->asin;
+}
+
+sub json_ld_type { 'MusicAlbum' }
+
+sub json_ld_fields {
+  my $self = shift;
+  return [
+    { name => 'title' },
+    { '@id' => sub { $self->og_url . '#album' } },
+    { url => sub { $self->og_url } },
+    { datePublished => sub { $self->year->year . '' } },
+    { byArtist => sub { $_[0]->artist->json_ld_data } },
+    { mainEntityOfPage => sub { $self->og_url } },
+  ];
+}
+
+sub json_ld_short_data {
+  my $self = shift;
+
+  return {
+    '@type'  => $self->json_ld_type,
+    name     => $self->title,
+    byArtist => {
+      '@type' => 'MusicGroup',
+      name    => 'Various Artists',
+      url     => $self->og_url,
+    }
+  }
 }
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration
