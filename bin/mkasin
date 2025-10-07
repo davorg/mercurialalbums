@@ -1,0 +1,39 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Mercurial::Schema;
+
+my $sch = Mercurial::Schema->get_schema;
+
+my $rs = $sch->resultset('Album');
+
+while (<>) {
+  next if $. == 1;
+
+  chomp;
+
+  my ($id) = /^(\d+),/;
+  my ($asin) = /(\w+)$/;
+
+  unless ($asin) {
+    warn "Error with: $_\n";
+    next;
+  }
+
+  my $album = $rs->find($id);
+
+  unless ($album) {
+    warn "Can't find album: $_\n";
+    next;
+  }
+
+  next if $album->album_retail_links->count;
+
+  $album->add_to_album_retail_links({
+    asin => $asin,
+    retailer => 'amazon',
+    country => 'GB',
+  });
+}

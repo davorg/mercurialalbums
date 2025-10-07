@@ -1,0 +1,34 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use feature 'say';
+
+use LWP::UserAgent;
+
+use Mercurial::Schema;
+
+STDOUT->autoflush(1);
+
+my $sch = Mercurial::Schema->get_schema;
+my $rs  = $sch->resultset('Album');
+
+my $ua = LWP::UserAgent->new;
+$ua->agent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 ' .
+           '(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36');
+
+my $i = 0;
+while (my $album = $rs->next) {
+  my $asin = $album->amazon_asin;
+
+  next unless $asin;
+
+  print ++$i, ': ', $asin, ' ';
+
+  my $request = HTTP::Request->new(GET => "https://images.amazon.com/images/P/$asin.jpg");
+  my $response = $ua->request($request, "docs/assets/albums/$asin.jpg");
+
+  say '- ', $response->code;
+
+  sleep 1;
+}
