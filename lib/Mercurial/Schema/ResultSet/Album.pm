@@ -17,7 +17,7 @@ sub sorted_albums {
 sub by_title {
   my $self = shift;
 
-  return $self->search(undef, { order_by => 'title' });
+  return $self->search(undef, { order_by => 'sort_title' });
 }
 
 sub by_year {

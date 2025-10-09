@@ -60,6 +60,11 @@ __PACKAGE__->table("album");
   data_type: 'text'
   is_nullable: 1
 
+=head2 sort_title
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -74,6 +79,8 @@ __PACKAGE__->add_columns(
   "is_winner",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
   "blurb",
+  { data_type => "text", is_nullable => 1 },
+  "sort_title",
   { data_type => "text", is_nullable => 1 },
 );
 
@@ -153,8 +160,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-09 12:01:58
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:tH8mPPOrS/ZMjbjOfptfvg
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-09 13:31:22
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:4F+pCswfQf9oMoupZB3gvQ
 
 with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags', 'MooX::Role::JSON_LD';
 

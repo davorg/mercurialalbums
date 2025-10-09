@@ -23,7 +23,10 @@ sub get_schema {
 
   my $db = shift || 'db/mercurial.db';
 
-  my $schema =  $class->connect("dbi:SQLite:$db");
+  my $schema =  $class->connect("dbi:SQLite:$db", {
+    sqlite_unicode => 1,
+    on_connect_call => 'use_foreign_keys',
+  });
 
   my $dbh = $schema->storage->dbh;
 
