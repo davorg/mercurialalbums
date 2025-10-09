@@ -163,3 +163,13 @@ a:hover{ text-decoration:underline }
   .album-list .btn-amazon{ width:auto; }
 }
 
+.artist-blurb{
+  margin: .5rem 0 1rem;
+  max-width: 65ch;
+}
+.blurb-text{
+  margin: 0;
+  white-space: pre-line; /* turns \n into line breaks; keeps wrapping */
+  color: var(--fg);
+}
+

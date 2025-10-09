@@ -55,6 +55,11 @@ __PACKAGE__->table("album");
   default_value: false
   is_nullable: 0
 
+=head2 blurb
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -68,6 +73,8 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_foreign_key => 1, is_nullable => 0 },
   "is_winner",
   { data_type => "boolean", default_value => \"false", is_nullable => 0 },
+  "blurb",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -146,8 +153,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-05 15:06:47
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Z9LQ1RUjCBYyB/Nga9dCAw
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-09 12:01:58
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:tH8mPPOrS/ZMjbjOfptfvg
 
 with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags', 'MooX::Role::JSON_LD';
 

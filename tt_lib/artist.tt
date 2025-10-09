@@ -1,5 +1,12 @@
-[% page_title = artist.name %]
+[% page_title = artist.name -%]
 <h1>[% artist.name %]</h1>
+
+[% IF artist.blurb -%]
+  <section class="artist-blurb">
+    <p class="blurb-text">[% artist.blurb | html %]</p>
+  </section>
+[% END -%]
+
 <ul class="album-list">
 [% FOREACH a IN artist.albums_rs.by_year -%]
   <li class="album">

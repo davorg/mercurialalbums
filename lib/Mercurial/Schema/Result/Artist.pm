@@ -43,6 +43,11 @@ __PACKAGE__->table("artist");
   default_value: name
   is_nullable: 0
 
+=head2 blurb
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -52,6 +57,8 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 0 },
   "sort_name",
   { data_type => "text", default_value => \"name", is_nullable => 0 },
+  "blurb",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -98,8 +105,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-05 15:06:47
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:+2GoqGsuhRWxpYH4SSnv6A
+# Created by DBIx::Class::Schema::Loader v0.07053 @ 2025-10-09 12:01:58
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Fprgo0vHqRD5vUPjFbxKEw
 
 with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags', 'MooX::Role::JSON_LD';
 
