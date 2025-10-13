@@ -109,7 +109,7 @@ sub json_ld_fields {
     { inLanguage => sub { 'en-GB' } },
     { isPartOf => sub { { '@type' => 'WebSite', name => 'Mercurial Albums', url => 'https://mercurialalbums.com/' } } },
     { about => sub { { '@type' => 'Thing', name => 'Mercury Prize' } } },
-    { temporalCoverage => 'year' },
+    { temporalCoverage => sub { '' . $_[0]->year } },
   ];
 }
 

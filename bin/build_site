@@ -59,8 +59,8 @@ sub write_page {
 my %pages = (
   index => {
     path => '',
-    title    => 'Mercurial Albums',
-    description => 'The history of the Mercury Prize',
+    title    => 'Mercurial Albums — Mercury Prize shortlists and winners',
+    description => 'Mercurial Albums — Mercury Prize shortlists and winners',
   },
   years => {
     path => 'year/',
