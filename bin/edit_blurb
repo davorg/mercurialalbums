@@ -1,0 +1,48 @@
+#!/usr/bin/env -S perl -CS
+
+use strict;
+use warnings;
+use utf8;
+
+use FindBin qw($Bin);
+use lib "$Bin/../lib";
+
+use Mercurial::Schema;
+use File::Temp qw(tempfile);
+use Encode qw(encode decode);
+use Unicode::Normalize qw(NFC);
+
+binmode STDOUT, ':encoding(UTF-8)';
+binmode STDERR, ':encoding(UTF-8)';
+
+die "Usage: $0 ARTIST_ID\n" unless @ARGV == 1;
+my $id = shift;
+
+my $schema = Mercurial::Schema->get_schema;
+
+my $artist = $schema->resultset('Artist')->find($id)
+  or die "No artist with id=$id\n";
+
+my ($fh, $path) = tempfile(SUFFIX => ".txt");
+binmode $fh, ':encoding(UTF-8)';
+
+print $fh ($artist->blurb // ""), "\n";
+close $fh;
+
+my $editor = $ENV{EDITOR} || 'vi';
+system($editor, $path) == 0 or die "Editor failed\n";
+
+open my $rfh, '<:encoding(UTF-8)', $path or die $!;
+my $new = do { local $/; <$rfh> };
+close $rfh;
+
+# normalise and tidy NBSP
+$new =~ s/\x{00A0}/ /g;
+$new = NFC($new);
+
+$schema->txn_do(sub{
+  $artist->update({ blurb => $new });
+});
+
+print "Updated blurb for id=$id ($artist->{_column_data}{name})\n";
+

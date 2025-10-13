@@ -1,0 +1,31 @@
+#!/usr/bin/env -S perl -CS
+
+use strict;
+use warnings;
+use utf8;
+use FindBin qw($Bin);
+use lib "$Bin/../lib";
+use Mercurial::Schema;
+
+my $sch = Mercurial::Schema->get_schema;
+
+my $bad = $sch->resultset('Artist')->search({
+  blurb => { '!=' => undef },
+  # quick mojibake heuristics
+  -or => [
+    { blurb => { like => '%â€™%' } },
+    { blurb => { like => '%â€œ%' } },
+    { blurb => { like => '%â€%' } },
+    { blurb => { like => '%â€“%' } },
+    { blurb => { like => '%â€”%' } },
+    { blurb => { like => '%Ã%'   } },
+    { blurb => { like => '%Â%'   } },
+  ],
+});
+
+while (my $a = $bad->next) {
+  my $s = $a->blurb // '';
+  $s =~ s/\s+/ /g;
+  printf "[%5d] %s → %.120s\n", $a->id, $a->name, $s;
+}
+

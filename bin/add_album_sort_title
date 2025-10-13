@@ -1,0 +1,20 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use feature 'say';
+
+use Mercurial::Schema;
+
+my $sch = Mercurial::Schema->get_schema;
+
+my $rs = $sch->resultset('Album');
+
+while (my $album = $rs->next) {
+  my $sort_title = $album->slug;
+  $sort_title =~ s/-/ /g;
+
+  say $album->title, " -> $sort_title";
+  $album->update({ sort_title => $sort_title });
+}

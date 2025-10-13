@@ -1,0 +1,62 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use builtin qw[trim];
+use feature 'say';
+
+use OpenAPI::Client::OpenAI;
+use Time::Piece;
+use Encode qw[encode];
+
+use Mercurial::Schema;
+
+my $sch = Mercurial::Schema->get_schema;
+
+my $count = 0;
+my $artists = $sch->resultset('Artist');
+
+while ($count < 20 and my $artist = $artists->next) {
+  next if defined $artist->blurb;
+  ++$count;
+  my $blurb = describe_artist($artist);
+  $artist->update({ blurb => $blurb });
+}
+
+sub describe_artist {
+  my ($artist) = @_;
+
+  my $name = $artist->name;
+
+  my $debug = 1;
+
+  my $api_key = $ENV{"OPENAI_API_KEY"} or die "OPENAI_API_KEY is not set\n";
+
+  my $client = OpenAPI::Client::OpenAI->new;
+
+  my $prompt = join " ",
+    'Produce a 100-200 word biography of the musical artist ',
+    $name,
+    '. The biography should be in plain text.';
+
+  my $res = $client->createChatCompletion({
+    body => {
+      model => 'gpt-4o',
+      # model => 'gpt-4.1-nano',
+      messages => [
+          { role => 'system', content => 'You are someone who knows a lot about popular music.' },
+          { role => 'user', content => $prompt },
+      ],
+      temperature => 1.0,
+    },
+  });
+
+  my $text = $res->res->json->{choices}[0]{message}{content};
+  $text = encode('UTF-8', $text);
+
+  say $text if $debug;
+
+  return $text;
+}
+

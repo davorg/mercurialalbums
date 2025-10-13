@@ -1,0 +1,107 @@
+#!/usr/bin/env -S perl -CS
+use strict;
+use warnings;
+use utf8;
+use feature 'say';
+
+use FindBin qw($Bin);
+use lib "$Bin/../lib";
+
+use Encode qw(encode decode);
+use HTML::Entities qw(decode_entities);
+use Unicode::Normalize qw(NFC);
+use Getopt::Long qw(GetOptions);
+use Mercurial::Schema;
+
+my $dry = 0;
+GetOptions('dry-run!' => \$dry) or die "Usage: $0 [--db file] [--dry-run]\n";
+
+my $sch = Mercurial::Schema->get_schema;
+
+# Count matches of a compiled regex
+sub count_matches {
+  my ($s, $re) = @_;
+  return 0 unless defined $s && length $s;
+  my $n = () = ($s =~ /$re/g);
+  return $n;
+}
+
+sub score_string {
+  my ($s) = @_;
+  return -1e9 unless defined $s && length $s;
+
+  my $penalty = 0;
+  $penalty += 5  * count_matches($s, qr/Ã/);
+  $penalty += 5  * count_matches($s, qr/Â/);
+  $penalty += 5  * count_matches($s, qr/â[€™“”•]/);
+  $penalty += 5  * count_matches($s, qr/â€“|â—/);     # en/em dashes sometimes appear split
+  $penalty += 10 * count_matches($s, qr/\x{FFFD}/);   # replacement char
+  $penalty += 2  * count_matches($s, qr/\x{00A0}/);   # NBSP
+
+  my $reward  = 0;
+  $reward += 1 * count_matches($s, qr/[’“”–—…éèáàíìóòúùçœæ]/i);
+
+  return $reward - $penalty;
+}
+
+sub candidates {
+  my ($s) = @_;
+  return () unless defined $s;
+
+  my @c;
+  push @c, $s;
+
+  # Common repairs
+  push @c, eval { decode('utf8', encode('cp1252', $s)) } || $s; # CP1252 → UTF-8
+  push @c, eval { decode('utf8', encode('latin1',  $s)) } || $s; # Latin-1 → UTF-8
+  push @c, eval { decode('utf8', encode('cp1252', decode('utf8', encode('cp1252', $s)))) } || $s; # double pass
+  push @c, decode_entities($s);                                  # &quot; &#x2019; etc.
+
+  # Tidy each: NBSP→space, normalise
+  @c = map {
+    my $t = $_;
+    $t =~ s/\x{00A0}/ /g;
+    NFC($t);
+  } @c;
+
+  # de-dup while preserving order
+  my %seen; @c = grep { !$seen{$_}++ } @c;
+  return @c;
+}
+
+sub best_fix {
+  my ($s) = @_;
+  my @c = candidates($s);
+  return $s unless @c;
+  my ($best) = sort { score_string($b) <=> score_string($a) } @c;
+  return $best;
+}
+
+# --- run ----------------------------------------------------------------------
+# BACKUP FIRST:
+#   sqlite3 "$db" ".backup ${db%.db}.pre-fix.sqlite3"
+
+my $rs = $sch->resultset('Artist')->search({ blurb => { '!=' => undef } });
+my ($checked, $changed) = (0, 0);
+
+$sch->txn_do(sub {
+  while (my $a = $rs->next) {
+    my $old = $a->blurb // next;
+    my $new = best_fix($old);
+
+    $checked++;
+    next if $new eq $old;
+
+    $changed++;
+    if ($dry) {
+      printf "WOULD FIX id=%d  %s\n", $a->id, $a->name;
+    } else {
+      $a->update({ blurb => $new });
+      printf "Fixed     id=%d  %s\n", $a->id, $a->name;
+    }
+  }
+  die "Dry-run; rolling back\n" if $dry;
+});
+
+say "Checked $checked, fixed $changed.";
+

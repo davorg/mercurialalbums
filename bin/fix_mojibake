@@ -1,0 +1,35 @@
+#!/usr/bin/env -S perl -CS
+
+use strict;
+use warnings;
+use utf8;
+
+use FindBin qw($Bin);
+use lib "$Bin/../lib";
+use Mercurial::Schema;
+use Encode qw(encode decode);
+
+my $sch = Mercurial::Schema->get_schema;
+
+sub demojibake {
+  my ($s) = @_;
+  return $s unless defined $s && $s =~ /(?:Ã|Â|â€™|â€œ|â€\x9d|â€“|â€”)/;
+  # Treat the *currently wrong* text as CP1252 bytes, then decode as UTF-8
+  my $fixed = eval { decode('utf8', encode('cp1252', $s)) } || $s;
+  return $fixed;
+}
+
+# Always make a backup first:
+#   sqlite3 mercurialalbums.db ".backup mercurialalbums.backup.sqlite3"
+
+$sch->txn_do(sub {
+  my $rs = $sch->resultset('Artist')->search({ blurb => { '!=' => undef } });
+  while (my $a = $rs->next) {
+    my $old = $a->blurb;
+    my $new = demojibake($old);
+    next if !defined $new || $new eq $old;
+    $a->update({ blurb => $new });
+    printf "Fixed %-30s (id=%d)\n", $a->name, $a->id;
+  }
+});
+
