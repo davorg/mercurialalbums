@@ -1,0 +1,24 @@
+[% page_title = "Page Not Found" %]
+<section class="hero hero-grid">
+  <div class="hero-art">
+    <img
+      src="/assets/mercury.png"
+      alt="Mercury, the Roman messenger, DJing on twin decks"
+      width="1200" height="675"
+      loading="lazy" decoding="async">
+  </div>
+
+  <div class="hero-copy">
+    <h1>Page Not Found</h1>
+    <p>
+      We can't find that page. Perhaps you followed a broken link.
+    </p>
+    <p>
+      <strong>Start browsing:</strong>
+      <a href="/year/">Years</a> · <a href="/artist/">Artists</a> · <a href="/album/">Albums</a>
+    </p>
+    <p class="fine-print">
+      An independent, non-commercial project. Corrections welcome.
+    </p>
+  </div>
+</section>
