@@ -25,7 +25,14 @@ sub og_description {
 
 sub og_url {
   my $self = shift;
-  return $self->domain . $self->url_path;
+
+  my $url_path = $self->url_path;
+
+  if ($url_path !~ /\.\w+$/ and $url_path !~ m|/$|) {
+    $url_path .= '/';
+  }
+
+  return $self->domain . $url_path;
 }
 
 sub og_type { 'website' }
