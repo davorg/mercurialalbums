@@ -77,6 +77,11 @@ my %pages = (
     title    => 'Albums',
     description => 'Every album that has been nominated for a Mercury Prize',
   },
+  404 => {
+    path => '404.html',
+    title => 'Page Not Found',
+    description => '404 - page not found',
+  },
 );
 
 my @urls;
@@ -89,6 +94,14 @@ write_page(
   path     => ['index.html'],
 );
 push @urls, $page->og_url;
+
+# 404
+$page = Mercurial::Page->new($pages{404});
+write_page(
+  template => '404.tt',
+  vars     => { page => $page },
+  path     => ['404.html'],
+);
 
 # Years
 $page = Mercurial::Page->new($pages{years});
