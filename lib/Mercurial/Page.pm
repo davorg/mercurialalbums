@@ -8,7 +8,9 @@ has [qw[ path title description ]] => (
   is => 'ro',
 );
 
-sub og_title { shift->title }
+sub og_title {
+  'Mercurial Albums - ' . shift->title;
+}
 
 sub slug_type { '' }
 sub slug_attribute { 'path' }

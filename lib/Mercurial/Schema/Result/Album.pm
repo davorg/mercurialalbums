@@ -168,7 +168,9 @@ with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags', 'MooX::Role::JSON_LD';
 sub slug_type      { 'album' }
 sub slug_attribute { 'title' }
 
-sub og_title { shift->title };
+sub og_title {
+  'Mercurial Albums - Album: ' . shift->title;
+};
 
 sub amazon_asin {
   my $self = shift;

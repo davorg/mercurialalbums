@@ -110,7 +110,9 @@ __PACKAGE__->has_many(
 
 with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags', 'MooX::Role::JSON_LD';
 
-sub og_title { shift->name }
+sub og_title {
+  'Mercurial Albums - Artist: ' . shift->name;
+}
 
 sub slug_type      { 'artist' }
 sub slug_attribute { 'name' }

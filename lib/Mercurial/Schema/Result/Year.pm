@@ -95,7 +95,9 @@ __PACKAGE__->has_many(
 
 with 'Mercurial::Role::Defaults', 'MooX::Role::SEOTags', 'MooX::Role::JSON_LD';
 
-sub og_title { shift->year }
+sub og_title {
+  'Mercurial Albums - Year: ' . shift->year;
+}
 
 sub slug_type      { 'year' }
 sub slug_attribute { 'year' }

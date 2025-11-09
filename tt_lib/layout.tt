@@ -17,7 +17,6 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>[% title %][% IF page_title %] — [% page_title %][% END %]</title>
   <link rel="stylesheet" href="/assets/site.css">
 
 [% object.tags %]
