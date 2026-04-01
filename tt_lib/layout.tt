@@ -32,6 +32,10 @@
 [% IF object.can('json_ld_wrapped');
      object.json_ld_wrapped;
    END %]
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1486883079150066"
+          crossorigin="anonymous"></script>
+
 </head>
 <body>
   <header class="site-header">
