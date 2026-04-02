@@ -1,0 +1,32 @@
+[% page_title = "About this site" %]
+<section class="hero hero-grid">
+  <div class="hero-art">
+    <img
+      src="/assets/mercury.png"
+      alt="Mercury, the Roman messenger, DJing on twin decks"
+      width="1200" height="675"
+      loading="lazy" decoding="async">
+  </div>
+
+  <div class="hero-copy">
+    <h1>About this site</h1>
+
+    <p>Mercurial Albums is a website dedicated to the Mercury Music Prize.
+    and the albums that have been shortlisted for it over the years.</p>
+
+    <p>The Mercury Prize has a reputation for highlighting interesting,
+    unusual, and sometimes unexpected albums, and this site exists to make
+    it easy to explore the prize’s history — to browse by
+    <a href="/year/">year</a>, discover
+    shortlisted <a href="/album/">albums</a> and
+    <a href="/artist/">artists</a>, and find new music to listen to.</p>
+
+    <p>This is an independent website and is not affiliated with the Mercury
+    Prize, the BPI, or any record label or artist. All album and artist
+    information is provided for informational purposes.</p>
+
+    <p>If you would like to get in touch about the site, please use the
+    <a href="/contact/">contact page</a>.
+
+  </div>
+</section>
