@@ -62,6 +62,21 @@ field %pages = (
     title    => 'Albums',
     description => 'Every album that has been nominated for a Mercury Prize',
   },
+  about => {
+    path => 'about/',
+    title => 'About this site',
+    description => 'About Mercurial Albums',
+  },
+  contact => {
+    path => 'contact/',
+    title => 'Contact',
+    description => 'Contact me about the site',
+  },
+  privacy => {
+    path => 'privacy/',
+    title => 'Privacy policy',
+    description => 'Our privacy policy',
+  },
   404 => {
     path => '404.html',
     title => 'Page Not Found',
@@ -120,6 +135,16 @@ method run {
     path     => ['index.html'],
   );
   push @urls, $page->og_url;
+
+  for (qw[about contact privacy]) {
+    $page = Mercurial::Page->new($pages{$_});
+    $self->write_page(
+      template => "$_.tt",
+      vars     => { page => $page },
+      path     => [ $_, 'index.html' ],
+    );
+    push @urls, $page->og_url;
+  }
 
   # 404
   $page = Mercurial::Page->new($pages{404});
