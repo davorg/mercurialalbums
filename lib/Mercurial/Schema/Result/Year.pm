@@ -106,7 +106,7 @@ sub json_ld_type { 'CollectionPage' }
 
 sub json_ld_fields {
   [
-    { name => sub { 'Mercutry Prize ' . $_[0]->year . ' shortlist' } },
+    { name => sub { 'Mercury Prize ' . $_[0]->year . ' shortlist' } },
     { url  => 'og_url' },
     { inLanguage => sub { 'en-GB' } },
     { isPartOf => sub { { '@type' => 'WebSite', name => 'Mercurial Albums', url => 'https://mercurialalbums.com/' } } },

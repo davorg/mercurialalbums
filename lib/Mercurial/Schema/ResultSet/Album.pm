@@ -10,7 +10,7 @@ sub BUILDARGS { $_[2] }
 sub sorted_albums {
   my $self = shift;
 
-  return $self->search(undef, { order_by => [ { '-desc' => 'is_winner' }, 'title' ] });
+  return $self->search(undef, { order_by => [ { '-desc' => 'is_winner' }, 'sort_title' ] });
 
 }
 

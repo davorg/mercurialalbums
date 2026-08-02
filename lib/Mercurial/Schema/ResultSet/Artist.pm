@@ -1,2 +1,18 @@
-package Mercurial::Schema::ResultSet::Artist;                                                                                                                                                                                                           use Moose;                                                                                                                  use MooseX::NonMoose;                                                                                                                                                                                                                                   extends 'DBIx::Class::ResultSet';                                                                                                                                                                                                                       sub BUILDARGS { $_[2] }                                                                                                                                                                                                                                 sub sorted_artists {                                                                                                          my $self = shift;                                                                                                                                                                                                                                       return $self->search(undef, { order_by => 'sort_name' });
-}                                                                                                                                                                                                                                                       __PACKAGE__->meta->make_immutable;                                                                                                                                                                                                                      1;
+package Mercurial::Schema::ResultSet::Artist;
+
+use Moose;
+use MooseX::NonMoose;
+
+extends 'DBIx::Class::ResultSet';
+
+sub BUILDARGS { $_[2] }
+
+sub sorted_artists {
+  my $self = shift;
+
+  return $self->search(undef, { order_by => 'sort_name' });
+}
+
+__PACKAGE__->meta->make_immutable;
+
+1;
