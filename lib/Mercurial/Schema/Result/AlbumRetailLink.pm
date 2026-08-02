@@ -53,6 +53,17 @@ __PACKAGE__->table("album_retail_link");
   data_type: 'text'
   is_nullable: 1
 
+=head2 url
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 link_type
+
+  data_type: 'text'
+  default_value: 'product'
+  is_nullable: 0
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -66,6 +77,10 @@ __PACKAGE__->add_columns(
   { data_type => "text", is_nullable => 0 },
   "asin",
   { data_type => "text", is_nullable => 1 },
+  "url",
+  { data_type => "text", is_nullable => 1 },
+  "link_type",
+  { data_type => "text", default_value => "product", is_nullable => 0 },
 );
 
 =head1 PRIMARY KEY
@@ -82,7 +97,7 @@ __PACKAGE__->set_primary_key("id");
 
 =head1 UNIQUE CONSTRAINTS
 
-=head2 C<album_id_retailer_country_unique>
+=head2 C<album_id_retailer_country_link_type_unique>
 
 =over 4
 
@@ -97,8 +112,8 @@ __PACKAGE__->set_primary_key("id");
 =cut
 
 __PACKAGE__->add_unique_constraint(
-  "album_id_retailer_country_unique",
-  ["album_id", "retailer", "country"],
+  "album_id_retailer_country_link_type_unique",
+  ["album_id", "retailer", "country", "link_type"],
 );
 
 =head1 RELATIONS

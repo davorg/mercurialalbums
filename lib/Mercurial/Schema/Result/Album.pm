@@ -16,6 +16,7 @@ use warnings;
 use Moose;
 use MooseX::NonMoose;
 use MooseX::MarkAsMethods autoclean => 1;
+use URI::Escape qw(uri_escape_utf8);
 extends 'DBIx::Class::Core';
 
 =head1 TABLE: C<album>
@@ -65,6 +66,16 @@ __PACKAGE__->table("album");
   data_type: 'text'
   is_nullable: 1
 
+=head2 cover_filename
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 cover_source_url
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -81,6 +92,10 @@ __PACKAGE__->add_columns(
   "blurb",
   { data_type => "text", is_nullable => 1 },
   "sort_title",
+  { data_type => "text", is_nullable => 1 },
+  "cover_filename",
+  { data_type => "text", is_nullable => 1 },
+  "cover_source_url",
   { data_type => "text", is_nullable => 1 },
 );
 
@@ -178,11 +193,43 @@ sub amazon_asin {
   my $asin = $self->album_retail_links->search({
     retailer => 'amazon',
     country  => 'GB',
+    link_type => 'product',
   })->first;
 
   return unless $asin;
 
   return $asin->asin;
+}
+
+sub amazon_link {
+  my $self = shift;
+
+  return $self->album_retail_links->search(
+    { retailer => 'amazon', country => 'GB' },
+    { order_by => \q{CASE link_type WHEN 'product' THEN 1 WHEN 'stream' THEN 2 ELSE 3 END} },
+  )->first;
+}
+
+sub amazon_stream_link {
+  my $self = shift;
+
+  return $self->album_retail_links->search({
+    retailer => 'amazon', country => 'GB', link_type => 'stream',
+  })->first;
+}
+
+sub amazon_music_url {
+  my $self = shift;
+  my $stream = $self->amazon_stream_link;
+  return $stream->url if $stream && $stream->url;
+
+  my $query = uri_escape_utf8(join ' ', $self->title, $self->artist->name);
+  return "https://music.amazon.co.uk/search/$query";
+}
+
+sub cover_image {
+  my $self = shift;
+  return $self->cover_filename;
 }
 
 sub json_ld_type { 'MusicAlbum' }

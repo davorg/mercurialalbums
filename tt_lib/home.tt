@@ -24,3 +24,23 @@
     </p>
   </div>
 </section>
+
+[% IF latest_year -%]
+<section class="latest-feature" aria-labelledby="latest-shortlist-heading">
+  <div class="latest-feature-copy">
+    <p class="eyebrow">New on Mercurial Albums</p>
+    <h2 id="latest-shortlist-heading">The [% latest_year.year %] shortlist is here</h2>
+    <p>
+      Explore all [% latest_album_count %] Albums of the Year, with artist profiles,
+      album artwork and Amazon Music links.
+    </p>
+    <p><a class="latest-feature-link" href="[% latest_year.url_path %]/">Browse the [% latest_year.year %] shortlist &rarr;</a></p>
+  </div>
+  <div class="latest-covers" aria-hidden="true">
+[% FOREACH album IN latest_albums -%]
+    <img src="/assets/albums/[% album.cover_image | html %]" alt=""
+         width="500" height="500" loading="lazy" decoding="async">
+[% END -%]
+  </div>
+</section>
+[% END -%]

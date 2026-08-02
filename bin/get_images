@@ -26,7 +26,17 @@ while (my $album = $rs->next) {
   print ++$i, ': ', $asin, ' ';
 
   my $request = HTTP::Request->new(GET => "https://images.amazon.com/images/P/$asin.jpg");
+  my $image = "docs/assets/albums/$asin.jpg";
   my $response = $ua->request($request, "docs/assets/albums/$asin.jpg");
+
+  if ($response->is_success) {
+    system 'magick', $image, '-resize', '500x500>', '-background', 'white',
+      '-gravity', 'center', '-extent', '500x500', $image;
+    $album->update({
+      cover_filename => "$asin.jpg",
+      cover_source_url => "https://images.amazon.com/images/P/$asin.jpg",
+    });
+  }
 
   say '- ', $response->code;
 

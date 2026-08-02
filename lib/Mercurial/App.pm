@@ -91,8 +91,18 @@ method write_page {
   my $path = File::Spec->catfile($out, @{$args{path}});
   my (undef,$dir,undef) = File::Spec->splitpath($path);
   make_path($dir) unless -d $dir;
+  my $output = '';
+  $tt->process($args{template}, $args{vars}, \$output) or die $tt->error;
+
+  $output =~ s/\A\s+(?=<!doctype)//;
+  $output =~ s/[ 	]+$//mg;
+  # Keep generated head markup stable across HTML serializer versions.
+  $output =~ s{<meta content="([^"<>]*)" name="([^"<>]*)">}{<meta name="$2" content="$1">}g;
+  $output =~ s{<meta content="([^"<>]*)" property="([^"<>]*)">}{<meta property="$2" content="$1">}g;
+  $output =~ s{<link href="([^"<>]*)" rel="canonical">}{<link rel="canonical" href="$1">}g;
+
   open my $fh, '>:encoding(UTF-8)', $path or die "write $path: $!";
-  $tt->process($args{template}, $args{vars}, $fh) or die $tt->error;
+  print {$fh} $output;
   close $fh;
 # say "Wrote $path";
 }
@@ -129,9 +139,22 @@ method run {
 
   # Home
   my $page = Mercurial::Page->new($pages{index});
+  my $latest_year = $schema->resultset('Year')->search(
+    {},
+    { order_by => { -desc => 'year' }, rows => 1 },
+  )->single;
+  my @latest_albums = $latest_year->albums_rs->search(
+    {},
+    { order_by => 'sort_title' },
+  )->all;
   $self->write_page(
     template => 'home.tt',
-    vars     => { page => $page },
+    vars     => {
+      page               => $page,
+      latest_year        => $latest_year,
+      latest_albums      => \@latest_albums,
+      latest_album_count => $latest_year->albums_rs->count,
+    },
     path     => ['index.html'],
   );
   push @urls, $page->og_url;

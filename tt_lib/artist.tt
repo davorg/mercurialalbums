@@ -11,9 +11,9 @@
 [% FOREACH a IN artist.albums_rs.by_year -%]
   <li class="album">
     <div class="cover">
-[%   IF a.amazon_asin -%]
+[%   IF a.cover_image -%]
         <img class="album-cover"
-             src="/assets/albums/[% a.amazon_asin | html %].jpg"
+             src="/assets/albums/[% a.cover_image | html %]"
              alt="Cover of [% a.title | html %] by [% a.artist.name | html %]"
              width="64" height="64" loading="lazy" decoding="async">
 [%   END -%]

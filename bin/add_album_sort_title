@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -CS
 
 use strict;
 use warnings;
@@ -6,15 +6,22 @@ use warnings;
 use feature 'say';
 
 use Mercurial::Schema;
+use Mercurial::Sort qw(sort_value);
 
-my $sch = Mercurial::Schema->get_schema;
+my $sch = Mercurial::Schema->get_schema(shift || 'db/mercurial.db');
 
-my $rs = $sch->resultset('Album');
+$sch->txn_do(sub {
+  my $artists = $sch->resultset('Artist');
+  while (my $artist = $artists->next) {
+    my $sort_name = sort_value($artist->name);
+    say 'Artist: ', $artist->name, " -> $sort_name";
+    $artist->update({ sort_name => $sort_name });
+  }
 
-while (my $album = $rs->next) {
-  my $sort_title = $album->slug;
-  $sort_title =~ s/-/ /g;
-
-  say $album->title, " -> $sort_title";
-  $album->update({ sort_title => $sort_title });
-}
+  my $albums = $sch->resultset('Album');
+  while (my $album = $albums->next) {
+    my $sort_title = sort_value($album->title);
+    say 'Album: ', $album->title, " -> $sort_title";
+    $album->update({ sort_title => $sort_title });
+  }
+});

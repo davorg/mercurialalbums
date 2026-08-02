@@ -4,10 +4,26 @@
        data-amazon-asin="[% album.amazon_asin | html %]"
        data-amazon-text="Buy on Amazon"
        data-amazon-mode="button">Buy on Amazon</a>
+  [%- ELSIF album.amazon_stream_link -%]
+    <a class="btn-amazon"
+       href="[% album.amazon_stream_link.url | html %]"
+       rel="sponsored noopener"
+       data-amazon-mode="button">Listen on Amazon Music</a>
   [%- ELSE -%]
     <a class="btn-amazon"
-       data-amazon-search="[% (album.title _ ' ' _ album.artist.name) | html %]"
-       data-amazon-text="Search on Amazon"
-       data-amazon-mode="button">Search on Amazon</a>
+       href="[% album.amazon_music_url | html %]"
+       rel="noopener">Find on Amazon Music</a>
+  [% END;
+   END -%]
+
+[% MACRO amazon_stream_button(album) BLOCK;
+     IF album.amazon_stream_link -%]
+    <a class="btn-amazon"
+       href="[% album.amazon_stream_link.url | html %]"
+       rel="sponsored noopener">Listen on Amazon Music</a>
+  [%- ELSE -%]
+    <a class="btn-amazon"
+       href="[% album.amazon_music_url | html %]"
+       rel="noopener">Find on Amazon Music</a>
   [% END;
    END -%]

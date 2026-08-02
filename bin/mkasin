@@ -29,11 +29,18 @@ while (<>) {
     next;
   }
 
-  next if $album->album_retail_links->count;
+  next if $album->album_retail_links->search({ retailer => 'amazon', country => 'GB', link_type => 'product' })->count;
 
   $album->add_to_album_retail_links({
     asin => $asin,
     retailer => 'amazon',
     country => 'GB',
+    link_type => 'product',
+    url => "https://www.amazon.co.uk/dp/$asin",
+  });
+
+  $album->update({
+    cover_filename => "$asin.jpg",
+    cover_source_url => "https://images.amazon.com/images/P/$asin.jpg",
   });
 }

@@ -216,6 +216,7 @@ for my $al (@todo) {
         album_id => $al->id,
         retailer => 'amazon',
         country  => 'GB',
+        link_type => 'product',
         asin     => $asin,
         url      => $url,
       },

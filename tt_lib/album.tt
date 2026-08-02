@@ -1,8 +1,8 @@
-[% IF album.amazon_asin -%]
+[% IF album.cover_image -%]
   <figure class="album-hero">
     <img
       class="album-cover-lg"
-      src="/assets/albums/[% album.amazon_asin | html %].jpg"
+      src="/assets/albums/[% album.cover_image | html %]"
       alt="Cover of [% title | html %] by [% artist.name | html %]"
       loading="eager" decoding="async">
   </figure>
@@ -16,6 +16,12 @@
 
 <p class="buy">
 [% amazon_button(album) %]
+[% IF album.amazon_asin %]
+[% amazon_stream_button(album) %]
+[% END %]
+  <a class="btn-amazon"
+     href="https://www.amazon.co.uk/gp/dmusic/promotions/AmazonMusicUnlimited?tag=davblog-21"
+     rel="sponsored noopener">Try Amazon Music Unlimited</a>
 </p>
 
 <p><a href="/album/">← All albums</a></p>
