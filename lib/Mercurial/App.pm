@@ -44,8 +44,8 @@ field $tt    :param = Template->new({
 field %pages = (
   index => {
     path => '',
-    title    => 'Mercurial Albums — Mercury Prize shortlists and winners',
-    description => 'Mercurial Albums — Mercury Prize shortlists and winners',
+    title       => 'Mercury Prize shortlists and winners',
+    description => 'Explore every Mercury Prize shortlist, nominated album and winner from 1992 to today.',
   },
   years => {
     path => 'year/',
