@@ -17,6 +17,7 @@ use Moose;
 use MooseX::NonMoose;
 use MooseX::MarkAsMethods autoclean => 1;
 extends 'DBIx::Class::Core';
+__PACKAGE__->load_components("InflateColumn::DateTime");
 
 =head1 TABLE: C<year>
 
@@ -39,7 +40,7 @@ __PACKAGE__->table("year");
 
 =head2 winner_announcement_date
 
-  data_type: 'text'
+  data_type: 'date'
   is_nullable: 1
 
 =cut
@@ -50,7 +51,7 @@ __PACKAGE__->add_columns(
   "year",
   { data_type => "integer", is_nullable => 0 },
   "winner_announcement_date",
-  { data_type => "text", is_nullable => 1 },
+  { data_type => "date", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -113,11 +114,7 @@ sub winner_announcement_date_display {
   my $date = shift->winner_announcement_date;
   return unless $date;
 
-  my @months = qw(January February March April May June July August September October November December);
-  my ($year, $month, $day) = $date =~ /^(\d{4})-(\d{2})-(\d{2})$/;
-  return $date unless $year;
-
-  return sprintf '%d %s %d', $day, $months[$month - 1], $year;
+  return $date->strftime('%{day} %B %Y');
 }
 
 sub json_ld_type { 'CollectionPage' }
