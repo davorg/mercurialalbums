@@ -30,6 +30,9 @@
   <div class="latest-feature-copy">
     <p class="eyebrow">New on Mercurial Albums</p>
     <h2 id="latest-shortlist-heading">The [% latest_year.year %] shortlist is here</h2>
+[% IF latest_year.winner_announcement_date -%]
+    <p class="announcement-date">Winner announced <time datetime="[% latest_year.winner_announcement_date %]">[% latest_year.winner_announcement_date_display %]</time></p>
+[% END -%]
     <p>
       Explore all [% latest_album_count %] Albums of the Year, with artist profiles,
       album artwork and Amazon Music links.

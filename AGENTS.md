@@ -27,6 +27,8 @@ generated site is committed in `docs/` (the GitHub Pages publishing root).
    `is_winner=0` until the winner is announced. Prefer a small,
    reviewable script or explicit transaction; do not replace the database.
    Reuse an existing artist row when the exact artist already exists.
+   Store a known winner announcement date in `year.winner_announcement_date` using
+   ISO `YYYY-MM-DD` format.
 3. Populate `sort_name` and `sort_title` using `Mercurial::Sort::sort_value`.
    It trims and collapses whitespace, lowercases the value, and removes a leading whole-word English article
    (`a`, `an`, or `the`). Run `bin/add_album_sort_title db/mercurial.db` to

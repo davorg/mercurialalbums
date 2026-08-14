@@ -211,6 +211,7 @@ a:hover{ text-decoration:underline }
   border-radius:.75rem;
 }
 .latest-feature h2{ margin:.15rem 0 .5rem; }
+.latest-feature .announcement-date{ color:var(--muted); font-size:.95rem; }
 .latest-feature p{ margin:.5rem 0 0; }
 .latest-feature .eyebrow{
   color:var(--accent);

@@ -37,6 +37,11 @@ __PACKAGE__->table("year");
   data_type: 'integer'
   is_nullable: 0
 
+=head2 winner_announcement_date
+
+  data_type: 'text'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->add_columns(
@@ -44,6 +49,8 @@ __PACKAGE__->add_columns(
   { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
   "year",
   { data_type => "integer", is_nullable => 0 },
+  "winner_announcement_date",
+  { data_type => "text", is_nullable => 1 },
 );
 
 =head1 PRIMARY KEY
@@ -101,6 +108,17 @@ sub og_title {
 
 sub slug_type      { 'year' }
 sub slug_attribute { 'year' }
+
+sub winner_announcement_date_display {
+  my $date = shift->winner_announcement_date;
+  return unless $date;
+
+  my @months = qw(January February March April May June July August September October November December);
+  my ($year, $month, $day) = $date =~ /^(\d{4})-(\d{2})-(\d{2})$/;
+  return $date unless $year;
+
+  return sprintf '%d %s %d', $day, $months[$month - 1], $year;
+}
 
 sub json_ld_type { 'CollectionPage' }
 

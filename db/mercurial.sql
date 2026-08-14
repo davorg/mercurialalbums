@@ -1,4 +1,4 @@
-CREATE TABLE year (id INTEGER PRIMARY KEY, year INTEGER NOT NULL UNIQUE CHECK(year BETWEEN 1800 AND 2100));
+CREATE TABLE year (id INTEGER PRIMARY KEY, year INTEGER NOT NULL UNIQUE CHECK(year BETWEEN 1800 AND 2100), winner_announcement_date TEXT CHECK(winner_announcement_date IS NULL OR winner_announcement_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'));
 CREATE TABLE artist (id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, sort_name text not null default name, blurb text);
 CREATE TABLE album (id INTEGER PRIMARY KEY, title TEXT NOT NULL, artist_id INTEGER NOT NULL REFERENCES artist(id) ON DELETE RESTRICT, year_id INTEGER NOT NULL REFERENCES year(id) ON DELETE RESTRICT, is_winner boolean not null default false, blurb text, sort_title text, cover_filename text, cover_source_url text, UNIQUE(title, artist_id));
 CREATE INDEX idx_album_artist ON album(artist_id);
