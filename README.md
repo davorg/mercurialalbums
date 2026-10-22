@@ -152,6 +152,30 @@ Build the publishing directory after changing data or templates:
 PERL5LIB=lib bin/build_site --db db/mercurial.db --out docs
 ```
 
+To record an announced winner, first list the shortlist and its album IDs:
+
+```sh
+bin/set_winner 2026
+```
+
+Then replace `ALBUM_ID` below with the winning album's ID and run both steps:
+
+```sh
+bin/set_winner 2026 ALBUM_ID &&
+  PERL5LIB=lib bin/build_site --db db/mercurial.db --out docs
+```
+
+The helper defaults to this repository's `db/mercurial.db` and accepts
+`--db FILE` for another existing database. It validates that the album belongs
+to the requested year's shortlist, then clears that year's previous winner and
+sets the selected album in one transaction. Other years and enriched fields
+are preserved. Repeating the same selection is safe. Omitting the album ID only
+lists choices; the command never selects a winner automatically. Review the
+generated diff before committing/publishing as described in AGENTS.md.
+
+Run `prove -v t/set_winner.t` to exercise winner updates on disposable databases,
+including failure/rollback and preservation of existing content.
+
 For an isolated preview with working artwork and styles:
 
 ```sh
@@ -180,6 +204,7 @@ enriched database directly and rebuilding rather than reimporting the CSV.
 
 | Script | Behavior and caveats |
 | --- | --- |
+| `set_winner [--db FILE] YEAR [ALBUM_ID]` | Lists the shortlist, or transactionally sets its sole winner. Validates the year/album before updating; does not rebuild or publish. |
 | `add_album_sort_title [DB]` | Backfills both artist and album sort values in a transaction. Defaults to the production database. |
 | `edit_blurb ARTIST_ID` | Opens a biography using `$EDITOR` (default `vi`), normalizes Unicode/NBSP, and saves it transactionally. |
 | `check_mojibake` | Read-only heuristic scan for broken encoding in artist biographies. |
@@ -230,12 +255,12 @@ The following describe the checked-in data and code as inspected on 22 October
   but output paths use title alone. Two artists with the same album title would
   overwrite the same HTML file. There is no collision check in the generator.
 
-There is no automated test suite or checked-in CI workflow. Current verification
-is build-based, supported by database queries and review of generated HTML and
-the complete diff. Inspection only added this document; application code,
-production data, generated pages, and pre-existing untracked CSV files were
-left unchanged. New or modified maintenance files must remain owned by
-`dave:dave`.
+At the initial inspection there was no automated test suite or checked-in CI
+workflow. The winner-update helper now has regression tests in `t/set_winner.t`;
+broader site verification remains build-based, supported by database queries and
+review of generated HTML and the complete diff. The inspection itself only added
+this document and left production data and generated pages unchanged. New or
+modified maintenance files must remain owned by `dave:dave`.
 
 The maintenance findings are tracked on GitHub. Each issue records the source
 evidence, impact, and acceptance criteria; no fixes were applied during this

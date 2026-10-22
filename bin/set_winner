@@ -1,0 +1,78 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use utf8;
+use feature 'say';
+
+use FindBin qw($Bin);
+use lib "$Bin/../lib";
+use Getopt::Long qw(GetOptions Configure);
+use Mercurial::Schema;
+
+binmode STDOUT, ':encoding(UTF-8)';
+binmode STDERR, ':encoding(UTF-8)';
+
+my $db = "$Bin/../db/mercurial.db";
+my $help;
+my $usage = <<'USAGE';
+Usage: bin/set_winner [--db FILE] YEAR [ALBUM_ID]
+
+Without ALBUM_ID, list the year's shortlist and album IDs without changing data.
+With ALBUM_ID, make that shortlisted album the year's only winner.
+The default database is db/mercurial.db in this repository.
+
+Examples:
+  bin/set_winner 2026
+  bin/set_winner 2026 ALBUM_ID
+
+After setting the winner, rebuild from the repository root:
+  PERL5LIB=lib bin/build_site --db db/mercurial.db --out docs
+USAGE
+
+Configure(qw(no_auto_abbrev no_ignore_case));
+GetOptions('db=s' => \$db, 'help|h' => \$help) or die $usage;
+if ($help) {
+  print $usage;
+  exit 0;
+}
+die $usage unless @ARGV == 1 || @ARGV == 2;
+my ($year, $album_id) = @ARGV;
+die "YEAR must be between 1800 and 2100.\n"
+  unless $year =~ /\A[0-9]{4}\z/ && $year >= 1800 && $year <= 2100;
+die "ALBUM_ID must be a positive integer from the shortlist.\n"
+  if defined $album_id && $album_id !~ /\A[1-9][0-9]*\z/;
+die "Database '$db' must be an existing, nonempty file.\n" unless -f $db && -s $db;
+
+my $schema = Mercurial::Schema->get_schema($db);
+my $year_row = $schema->resultset('Year')->find({ year => $year })
+  or die "No shortlist found for $year.\n";
+my $albums = $year_row->albums_rs;
+
+unless (defined $album_id) {
+  say "$year shortlist (album IDs):";
+  my $shortlist = $albums->search({}, {
+    order_by => 'sort_title',
+    prefetch => 'artist',
+  });
+  while (my $album = $shortlist->next) {
+    printf "%4d  %s — %s%s\n", $album->id, $album->artist->name,
+      $album->title, $album->is_winner ? ' [winner]' : '';
+  }
+  exit 0;
+}
+
+my ($artist, $title);
+$schema->txn_do(sub {
+  my $winner = $albums->find($album_id)
+    or die "Album $album_id is not shortlisted for $year. Run bin/set_winner $year to see the choices.\n";
+  ($artist, $title) = ($winner->artist->name, $winner->title);
+
+  $albums->update({ is_winner => 0 });
+  $albums->search({ id => $album_id })->update({ is_winner => 1 });
+  die "Could not set exactly one winner for $year; rolling back.\n"
+    unless $albums->search({ is_winner => 1 })->count == 1;
+});
+
+say "Set $year winner: $artist — $title (album $album_id).";
+say 'Database updated. Rebuild the site to publish the winner.';

@@ -59,6 +59,19 @@ generated site is committed in `docs/` (the GitHub Pages publishing root).
 When the winner is announced, set exactly one album for that year to
 `is_winner=1` in `db/mercurial.db`, then rebuild `docs/`.
 
+Use `bin/set_winner YEAR` to list the shortlisted albums and their IDs. After
+verifying the announced result, run `bin/set_winner YEAR ALBUM_ID` to set the
+winner transactionally, clearing any previous winner for that year. For 2026:
+
+    bin/set_winner 2026
+    bin/set_winner 2026 ALBUM_ID &&
+      PERL5LIB=lib bin/build_site --db db/mercurial.db --out docs
+
+Replace `ALBUM_ID` with the ID from the listing. The helper defaults to this
+repository's production database; `--db FILE` selects another existing database.
+An album outside the selected year's shortlist is rejected without changing
+winner flags. The helper updates the database only; the build remains separate.
+
 ## Useful checks
 
 Run a clean build into a temporary directory:
@@ -74,10 +87,12 @@ Useful SQLite checks:
     sqlite3 db/mercurial.db \
       'select y.year, sum(a.is_winner) from album a join year y on y.id=a.year_id group by y.year order by y.year;'
 
-There is currently no automated test suite or dependency manifest in the
-repository. Verification is therefore build-based plus inspection of the
-generated diff/HTML. The code requires modern Perl (the application uses Perl
-5.40 class syntax) and locally installed CPAN dependencies including
+Run `prove -v t/set_winner.t` for the winner-update regression checks. These use
+disposable databases and cover validation, winner replacement, repeated runs,
+transaction rollback, and preservation of other data. There is no dependency
+manifest or comprehensive site test suite; verify site changes with a clean
+build and inspection of the generated diff/HTML. The code requires modern Perl
+(the application uses Perl 5.40 class syntax) and locally installed CPAN dependencies including
 DBIx::Class, Template Toolkit, Moose/Moo, and SQLite support.
 
 ## File ownership
