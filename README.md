@@ -75,7 +75,7 @@ then writes these routes:
 
 | Route | Content and ordering |
 | --- | --- |
-| `/` | Introduction and latest shortlist, with covers ordered by title. |
+| `/` | Introduction and latest shortlist; once a winner is recorded, its title, artist, and large cover appear above a row of the other shortlisted albums. |
 | `/year/` | Years, newest first. |
 | `/year/<year>/` | Shortlist, winner first and then normalized album title. |
 | `/artist/` | Artists ordered by normalized name. |
@@ -172,6 +172,10 @@ sets the selected album in one transaction. Other years and enriched fields
 are preserved. Repeating the same selection is safe. Omitting the album ID only
 lists choices; the command never selects a winner automatically. Review the
 generated diff before committing/publishing as described in AGENTS.md.
+
+On rebuild, the homepage feature switches to a large winner cover, title, and
+artist when the latest year's winner is recorded, with the other shortlisted
+albums in a smaller row below. Until then, it shows the full shortlist grid.
 
 Run `prove -v t/set_winner.t` to exercise winner updates on disposable databases,
 including failure/rollback and preservation of existing content.

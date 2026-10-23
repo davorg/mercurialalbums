@@ -26,6 +26,37 @@
 </section>
 
 [% IF latest_year -%]
+[% IF latest_winner -%]
+<section class="latest-feature latest-feature--winner" aria-labelledby="latest-winner-heading">
+  <div class="latest-feature-copy">
+    <p class="eyebrow">[% latest_year.year %] Mercury Prize winner</p>
+    <h2 id="latest-winner-heading"><a href="[% latest_winner.url_path %]/">[% latest_winner.title | html %]</a></h2>
+    <p class="latest-winner-artist">by <a href="[% latest_winner.artist.url_path %]/">[% latest_winner.artist.name | html %]</a></p>
+    <p><a class="latest-feature-link" href="[% latest_year.url_path %]/">Browse the [% latest_year.year %] shortlist &rarr;</a></p>
+  </div>
+[% IF latest_winner.cover_image -%]
+  <a class="latest-winner-cover" href="[% latest_winner.url_path %]/">
+    <img src="/assets/albums/[% latest_winner.cover_image | html %]"
+         alt="Cover of [% latest_winner.title | html %] by [% latest_winner.artist.name | html %]"
+         width="500" height="500" loading="lazy" decoding="async">
+  </a>
+[% END -%]
+[% IF latest_other_albums.size -%]
+  <div class="latest-other-albums">
+    <h3>The rest of the [% latest_year.year %] shortlist</h3>
+    <ul class="latest-other-covers">
+[% FOREACH album IN latest_other_albums -%]
+      <li><a href="[% album.url_path %]/">
+        <img src="/assets/albums/[% album.cover_image | html %]"
+             alt="[% album.title | html %] by [% album.artist.name | html %]"
+             width="500" height="500" loading="lazy" decoding="async">
+      </a></li>
+[% END -%]
+    </ul>
+  </div>
+[% END -%]
+</section>
+[% ELSE -%]
 <section class="latest-feature" aria-labelledby="latest-shortlist-heading">
   <div class="latest-feature-copy">
     <p class="eyebrow">New on Mercurial Albums</p>
@@ -46,4 +77,5 @@
 [% END -%]
   </div>
 </section>
+[% END -%]
 [% END -%]

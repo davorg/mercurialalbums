@@ -147,13 +147,17 @@ method run {
     {},
     { order_by => 'sort_title' },
   )->all;
+  my ($latest_winner) = grep { $_->is_winner } @latest_albums;
+  my @latest_other_albums = grep { !$_->is_winner } @latest_albums;
   $self->write_page(
     template => 'home.tt',
     vars     => {
-      page               => $page,
-      latest_year        => $latest_year,
-      latest_albums      => \@latest_albums,
-      latest_album_count => $latest_year->albums_rs->count,
+      page                => $page,
+      latest_year         => $latest_year,
+      latest_albums       => \@latest_albums,
+      latest_album_count  => $latest_year->albums_rs->count,
+      latest_winner       => $latest_winner,
+      latest_other_albums => \@latest_other_albums,
     },
     path     => ['index.html'],
   );
